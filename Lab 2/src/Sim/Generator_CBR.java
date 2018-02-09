@@ -1,5 +1,9 @@
 package Sim;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class Generator_CBR extends Node {
 	
 	protected double _time = 0;
@@ -8,6 +12,13 @@ public class Generator_CBR extends Node {
 		super(node, node);
 		_id = new NetworkAddr(network, node);
 	}
+
+    private void log_time(String time)
+            throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter("CBR_TIMES",true));
+        writer.write(time + "\n");
+        writer.close();
+    }
 	
 	public void StartSending(int network, int node, int number, int timeInterval, int startSeq, int number_of_packages_per_secound)
 	{
@@ -39,13 +50,23 @@ public class Generator_CBR extends Node {
 		 for (int i = 0; _stopSendingAfter > i; i++) {
 			 for (int y = 0; y < number_of_packages_per_secound; y++) {
 			     if (num_packages >=_stopSendingAfter){
-			         break;
+			         return;
                  }
+
+                 try{
+                     log_time("Sending: " + Double.toString(_time));
+                 } catch (Exception e) {
+                     // TODO: handle exception
+                     System.out.println(e);
+                 }
+
 				 System.out.println("Time of sending package " + pkg_nr + " is: " + _time);
 				 pkg_nr++;
 				 send(this, new TimerEvent(), _time);
 				 _time += temp_time;
 				 num_packages++;
+
+
 
 			 }
 			 _time += timeInterval;
@@ -56,7 +77,8 @@ public class Generator_CBR extends Node {
 	public void recv(SimEnt src, Event ev)
 	{
 		if (ev instanceof TimerEvent)
-		{			
+		{
+
 			if (_stopSendingAfter > _sentmsg)
 			{
 				_sentmsg++;
@@ -68,8 +90,13 @@ public class Generator_CBR extends Node {
 		}
 		if (ev instanceof Message)
 		{
+            try{
+                log_time("Recieving: " + Double.toString(SimEngine.getTime()));
+            } catch (Exception e) {
+                // TODO: handle exception
+                System.out.println(e);
+            }
 			System.out.println("Node "+_id.networkId()+ "." + _id.nodeId() +" receives message with seq: "+((Message) ev).seq() + " at time "+SimEngine.getTime());
-			
 		}
 	}
 	
