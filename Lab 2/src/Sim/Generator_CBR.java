@@ -13,9 +13,9 @@ public class Generator_CBR extends Node {
 		_id = new NetworkAddr(network, node);
 	}
 
-    private void log_time(String time)
+    private void log_time(String time, String file_name)
             throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter("CBR_TIMES",true));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file_name,true));
         writer.write(time + "\n");
         writer.close();
     }
@@ -54,7 +54,7 @@ public class Generator_CBR extends Node {
                  }
 
                  try{
-                     log_time("Sending: " + Double.toString(_time));
+                     log_time(Double.toString(_time), "CBR_Generator_Sending");
                  } catch (Exception e) {
                      // TODO: handle exception
                      System.out.println(e);
@@ -91,7 +91,7 @@ public class Generator_CBR extends Node {
 		if (ev instanceof Message)
 		{
             try{
-                log_time("Recieving: " + Double.toString(SimEngine.getTime()));
+                log_time(Double.toString(SimEngine.getTime()), "CBR_Generator_Recieving");
             } catch (Exception e) {
                 // TODO: handle exception
                 System.out.println(e);
