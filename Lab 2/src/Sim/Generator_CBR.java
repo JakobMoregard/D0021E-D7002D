@@ -2,14 +2,14 @@ package Sim;
 
 public class Generator_CBR extends Node {
 	
-	protected int _time = 0;
+	protected double _time = 0;
 	
 	public Generator_CBR (int network, int node) {
 		super(node, node);
 		_id = new NetworkAddr(network, node);
 	}
 	
-	public void StartSending(int network, int node, int number, int timeInterval, int startSeq)
+	public void StartSending(int network, int node, int number, int timeInterval, int startSeq, int number_of_packages_per_secound)
 	{
 		_stopSendingAfter = number;
 		_timeBetweenSending = timeInterval;
@@ -31,16 +31,26 @@ public class Generator_CBR extends Node {
 		
 		"\n	Time between sending: " +
 		_timeBetweenSending);
+
+		double temp_time = 1.0/number_of_packages_per_secound;
+		int pkg_nr = 1;         //Prints the number of any package in the loop bellow.
+		int num_packages = 0;   //This will help to stop generating packages when you reach the limit of _stopSendingAfter
 		
-		
-		 for (int i = 0; _stopSendingAfter > i; i++){
-			 System.out.println("Time of sending package " + (i+1) + " is: " + _time);
-			 send(this, new TimerEvent(),_time);
+		 for (int i = 0; _stopSendingAfter > i; i++) {
+			 for (int y = 0; y < number_of_packages_per_secound; y++) {
+			     if (num_packages >=_stopSendingAfter){
+			         break;
+                 }
+				 System.out.println("Time of sending package " + pkg_nr + " is: " + _time);
+				 pkg_nr++;
+				 send(this, new TimerEvent(), _time);
+				 _time += temp_time;
+				 num_packages++;
+
+			 }
 			 _time += timeInterval;
 			 _timeBetweenSending += timeInterval;
-			 
 		 }
-			
 	}
 	
 	public void recv(SimEnt src, Event ev)
