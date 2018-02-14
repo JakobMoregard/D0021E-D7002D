@@ -6,13 +6,25 @@ public class Run {
 	public static void main (String [] args)
 	{
  		//Creates two links
-		Link link1 = new Link();
+		LossyLink link1 = new LossyLink(0,0, 50);
 		Link link2 = new Link();
 		
 		// Create two end hosts that will be
 		// communicating via the router
-		Generator_GAUSSIAN host1 = new Generator_GAUSSIAN(1,1);
-		Generator_GAUSSIAN host2 = new Generator_GAUSSIAN(2,1);
+		//Node host1 = new Node(1,1);
+		//Node host2 = new Node(2,1);
+
+		//CBR
+		//Generator_CBR host1 = new Generator_CBR(1,1);
+		//Sink host2 = new Sink(2,1);
+
+		//NORMAL
+		//Generator_NORMAL host1 = new Generator_NORMAL(1,1);
+		//Sink host2 = new Sink(2,1);
+
+		//POISSON
+		Generator_POISSION host1 = new Generator_POISSION(1,1);
+		Sink host2 = new Sink(2,1);
 
 		//Connect links to hosts
 		host1.setPeer(link1);
@@ -29,7 +41,16 @@ public class Run {
 		
 		// Generate some traffic
 		// host1 will send 3 messages with time interval 5 to network 2, node 1. Sequence starts with number 1
-		host1.StartSending(2, 2, 3, 5, 1); 
+
+        //CBR
+		//host1.StartSending(2, 2, 50,10000);
+
+		//Normal
+        //host1.StartSending(2,2,2,10,10000, 1);
+
+        //POISSON
+        host1.StartSending(2,2,10000,10);
+
 		// host2 will send 2 messages with time interval 10 to network 1, node 1. Sequence starts with number 10
 		// host2.StartSending(1, 1, 2, 10, 10); 
 		

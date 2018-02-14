@@ -38,12 +38,10 @@ public class Generator_POISSION extends Node {
         return k - 1;
     }
 
-    public void StartSending(int network, int node, int std_diviation, int mean_pkg, double time_limit, double lambda)
+    public void StartSending(int network, int node, double time_limit, double lambda)
     {
         this.lambda = lambda;
         _toNetwork = network;
-        _std_deviation = std_diviation;
-        _mean = mean_pkg;
         _toHost = node;
         _seq = 1;
         this.time_limit = time_limit;
@@ -73,7 +71,7 @@ public class Generator_POISSION extends Node {
 
                     try
                     {
-                        log_time(Double.toString(thisTime), "NORMAL_Generator_Sending");
+                        log_time(Double.toString(thisTime), "POISSON_Generator_Sending");
                     } catch (Exception e) {
                         // TODO: handle exception
                         System.out.println(e);
