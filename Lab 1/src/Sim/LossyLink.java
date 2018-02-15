@@ -4,12 +4,12 @@ import java.util.Random;
 
 public class LossyLink extends Link {
 	private int delay = 0;
-	private int jitter = 0;
+	private double jitter = 0;
 	private int drop = 0;
 	
 	Random randInt = new Random();
 	
-	public LossyLink(int delay, int jitter, int drop){
+	public LossyLink(int delay, double jitter, int drop){
 		super();
 		this.delay = delay;
 		this.jitter = jitter;
@@ -34,7 +34,7 @@ public class LossyLink extends Link {
 			
 			// Check if the package should be dropped
 			int rand = 1 + randInt.nextInt(100);
-			if (rand >= drop){
+			if (rand < drop){
 				System.out.println("LossyLink dropped the package!");
 				return;
 			} else {
