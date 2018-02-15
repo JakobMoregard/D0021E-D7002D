@@ -15,13 +15,15 @@ public class Generator_CBR extends Node {
 		_id = new NetworkAddr(network, node);
 	}
 
+	// A function to help print timestamps to a file
     private void log_time(String time, String file_name)
             throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(file_name,true));
         writer.write(time + "\n");
         writer.close();
     }
-	
+
+    // Modified to only take a time limit and the ammount of packages per second.
 	public void StartSending(int network, int node, int number_of_packages_per_second, int time_limit)
 	{
 	    this.time_limit = time_limit;
@@ -33,7 +35,8 @@ public class Generator_CBR extends Node {
         System.out.println("Sending signal to start sending...");
 
 	}
-	
+
+	// Override: Modified to send x number of package per second.
 	public void recv(SimEnt src, Event ev)
 	{
 

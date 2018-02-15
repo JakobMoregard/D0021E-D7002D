@@ -19,6 +19,7 @@ public class Generator_NORMAL extends Node {
         _id = new NetworkAddr(network, node);
     }
 
+    // A function to help print timestamps to a file
     private void log_time(String time, String file_name)
             throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(file_name,true));
@@ -26,7 +27,8 @@ public class Generator_NORMAL extends Node {
         writer.close();
     }
 
-    public void StartSending(int network, int node, int std_diviation, int mean_pkg, double time_limit, int i)
+    // Modified to only take a time limit, diviation and mean.
+    public void StartSendingNormal(int network, int node, int std_diviation, int mean_pkg, double time_limit)
     {
         _toNetwork = network;
         _std_deviation = std_diviation;
@@ -39,6 +41,7 @@ public class Generator_NORMAL extends Node {
 
     }
 
+    // Override: Modified to send packages as a normal distribution with a random gaussian number.
     public void recv(SimEnt src, Event ev)
     {
 
