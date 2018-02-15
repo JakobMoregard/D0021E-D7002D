@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.Random;
 import java.lang.Math;
 
-public class Generator_POISSION extends Node {
+public class Generator_POISSON extends Node {
 
     protected double _time = 0;
     protected int _std_deviation;
@@ -14,7 +14,7 @@ public class Generator_POISSION extends Node {
     protected double time_limit = 0.0;
     protected double lambda = 0.0;
 
-    public Generator_POISSION (int network, int node) {
+    public Generator_POISSON (int network, int node) {
         super(node, node);
         _id = new NetworkAddr(network, node);
     }

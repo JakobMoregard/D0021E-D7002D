@@ -19,12 +19,12 @@ public class Run {
 		//Sink host2 = new Sink(2,1);
 
 		//NORMAL
-		Generator_NORMAL host1 = new Generator_NORMAL(1,1);
-		Sink host2 = new Sink(2,1);
+		//Generator_NORMAL host1 = new Generator_NORMAL(1,1);
+		//Sink host2 = new Sink(2,1);
 
 		//POISSON
-		//Generator_POISSION host1 = new Generator_POISSION(1,1);
-		//Sink host2 = new Sink(2,1);
+		Generator_POISSON host1 = new Generator_POISSON(1,1);
+		Sink host2 = new Sink(2,1);
 
 		//Connect links to hosts
 		host1.setPeer(link1);
@@ -46,10 +46,10 @@ public class Run {
 		//host1.StartSending(2, 2, 50,10000);
 
 		//Normal
-        host1.StartSendingNormal(2,2,2,10,10000);
+        //host1.StartSendingNormal(2,2,2,10,10000);
 
         //POISSON
-        //host1.StartSending(2,2,10000,10);
+        host1.StartSending(2,2,10000,10);
 
 		// host2 will send 2 messages with time interval 10 to network 1, node 1. Sequence starts with number 10
 		// host2.StartSending(1, 1, 2, 10, 10); 
