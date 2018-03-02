@@ -6,10 +6,12 @@ public class Link extends SimEnt{
 	protected SimEnt _connectorA=null;
 	protected SimEnt _connectorB=null;
 	protected int _now=0;
+	protected  int link_cost;
 	
-	public Link()
+	public Link(int link_cost)
 	{
-		super();	
+		super();
+		this.link_cost = link_cost;
 	}
 	
 	// Connects the link to some simulation entity like

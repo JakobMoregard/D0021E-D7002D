@@ -38,7 +38,7 @@ public class Node extends SimEnt {
 	    oldAddr = _id;
 		_id = new NetworkAddr(network, node);
 
-		Link newLink = new Link();
+		Link newLink = new Link(1);
 		newLink.setConnector(newLink);
 
 		// 1. Update the routers table.

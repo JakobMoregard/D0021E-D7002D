@@ -6,9 +6,9 @@ public class Run {
 	public static void main (String [] args)
 	{
  		//Creates two links
-		Link link1 = new Link();
-		Link link2 = new Link();
-		Link R1TOR2 = new Link();
+		Link link1 = new Link(1);
+		Link link2 = new Link(1);
+		Link R1TOR2 = new Link(1);
 		
 		// Create two end hosts that will be
 		// communicating via the router
