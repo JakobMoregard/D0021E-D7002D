@@ -12,11 +12,15 @@ public class Router extends SimEnt{
     private int node_interfaces;
     private int router_interfaces;
 	private int _now=0;
+	private int _RID;
 
 	// When created, number of interfaces are defined
 	
-	Router(int node_interfaces, int router_interfaces)
+	Router(int RID, int node_interfaces, int router_interfaces)
 	{
+		// Set router ID
+		this._RID = RID;
+
 	    // Node table
 		node_table = new RouteTableEntry[node_interfaces];
 		this.node_interfaces = node_interfaces;
@@ -29,9 +33,9 @@ public class Router extends SimEnt{
 	// This method connects links to the router and also informs the 
 	// router of the host connects to the other end of the link
 	
-	public void connectInterface(int interfaceNumber, SimEnt link, SimEnt node)
+	public void connectInterfaceToNode(int interfaceNumber, SimEnt link, SimEnt node)
 	{
-	    System.out.println("ConnectInterface!");
+	    System.out.println("Connect Node!");
 		if (interfaceNumber<node_interfaces)
 		{
 			node_table[interfaceNumber] = new RouteTableEntry(link, node);
@@ -41,6 +45,27 @@ public class Router extends SimEnt{
 		
 		((Link) link).setConnector(this);
 	}
+
+    public void connectInterfaceToRouter(int interfaceNumber, SimEnt link, SimEnt router)
+    {
+        System.out.println("Connect Router!");
+        if (interfaceNumber<router_interfaces)
+        {
+            router_table[interfaceNumber] = new RouteTableEntry(link, router);
+        }
+        else
+            System.out.println("Trying to connect to port not in router");
+
+        ((Link) link).setConnector(this);
+    }
+
+    public void printTable()
+    {
+        for (RouteTableEntry router : router_table)
+        {
+            System.out.println("Node: " + router);
+        }
+    }
 
 	// This method searches for an entry in the routing table that matches
 	// the network number in the destination field of a messages. The link
@@ -73,6 +98,12 @@ public class Router extends SimEnt{
 			send (sendNext, event, _now);
 	
 		}
+
+		// If we get a RIP package
+		if (event instanceof RIP)
+		{
+		    System.out.println("\n\n\nDetected RIP package!\n\n\n");
+        }
 
 
 		// Not fully implemented...

@@ -8,6 +8,7 @@ public class Run {
  		//Creates two links
 		Link link1 = new Link();
 		Link link2 = new Link();
+		Link R1TOR2 = new Link();
 		
 		// Create two end hosts that will be
 		// communicating via the router
@@ -35,15 +36,18 @@ public class Run {
 		// the host connected to the other
 		// side of the link is also provided
 		// Note. A switch is created in same way using the Switch class
-		Router routeNode = new Router(3, 2);
-		routeNode.connectInterface(0, link1, host1);
-		routeNode.connectInterface(1, link2, host2);
+		Router R1 = new Router(1,3, 2);
+		Router R2 = new Router(2,2,2);
+
+		R2.connectInterfaceToRouter(1, R1TOR2, R1);
+		//routeNode.connectInterface(0, link1, host1);
+		//routeNode.connectInterface(1, link2, host2);
 		
 		// Generate some traffic
 		// host1 will send 3 messages with time interval 5 to network 2, node 1. Sequence starts with number 1
 
         //CBR
-		host1.StartSending(2, 2, 10,1);
+		//host1.StartSending(2, 2, 10,1);
 
 		//Normal
         //host1.StartSendingNormal(2,2,2,10,10000);

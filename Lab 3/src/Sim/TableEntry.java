@@ -6,12 +6,12 @@ package Sim;
 public class TableEntry {
 
 	private SimEnt _link;
-	private SimEnt _node;
+	private SimEnt _device;
 	
-	TableEntry(SimEnt link, SimEnt node)
+	TableEntry(SimEnt link, SimEnt device)
 	{
 		_link=link;
-		_node=node;
+		_device=device;
 	}
 	
 	protected SimEnt link()
@@ -19,9 +19,9 @@ public class TableEntry {
 		return _link;
 	}
 
-	protected SimEnt node()
+	protected SimEnt device()
 	{
-		return _node;
+		return _device;
 	}
 	
 }

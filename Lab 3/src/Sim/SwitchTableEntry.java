@@ -19,7 +19,7 @@ public class SwitchTableEntry extends TableEntry{
 
 	public SimEnt node()
 	{
-		return super.node();
+		return super.device();
 	}
 
 }
