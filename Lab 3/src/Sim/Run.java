@@ -16,7 +16,7 @@ public class Run {
 
 		//CBR
 		Generator_CBR host1 = new Generator_CBR(1,1);
-		Sink host2 = new Sink(2,1);
+        Node host2 = new Node(2,1);
 
 		//NORMAL
 		//Generator_NORMAL host1 = new Generator_NORMAL(1,1);
@@ -35,7 +35,7 @@ public class Run {
 		// the host connected to the other
 		// side of the link is also provided
 		// Note. A switch is created in same way using the Switch class
-		Router routeNode = new Router(3);
+		Router routeNode = new Router(3, 2);
 		routeNode.connectInterface(0, link1, host1);
 		routeNode.connectInterface(1, link2, host2);
 		
@@ -52,7 +52,7 @@ public class Run {
         //host1.StartSending(2,2,5,10);
 
 		//Trigger the host to change
-        //host2.updateIP(3,1);
+        // host2.updateIP(3,1);
 
 		// host2 will send 2 messages with time interval 10 to network 1, node 1. Sequence starts with number 10
 		// host2.StartSending(1, 1, 2, 10, 10); 

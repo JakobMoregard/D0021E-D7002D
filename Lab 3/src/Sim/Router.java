@@ -6,16 +6,24 @@ import java.util.Arrays;
 
 public class Router extends SimEnt{
 
-	private RouteTableEntry [] _routingTable;
-	private int _interfaces;
+    // Rename of the tables to seperate the nodes and the routers
+	private RouteTableEntry [] node_table;
+	private RouteTableEntry [] router_table;
+    private int node_interfaces;
+    private int router_interfaces;
 	private int _now=0;
 
 	// When created, number of interfaces are defined
 	
-	Router(int interfaces)
+	Router(int node_interfaces, int router_interfaces)
 	{
-		_routingTable = new RouteTableEntry[interfaces];
-		_interfaces=interfaces;
+	    // Node table
+		node_table = new RouteTableEntry[node_interfaces];
+		this.node_interfaces = node_interfaces;
+
+		// Router table, has to be modified a bit before working...
+        router_table = new RouteTableEntry[router_interfaces];
+        this.router_interfaces = router_interfaces;
 	}
 	
 	// This method connects links to the router and also informs the 
@@ -23,9 +31,10 @@ public class Router extends SimEnt{
 	
 	public void connectInterface(int interfaceNumber, SimEnt link, SimEnt node)
 	{
-		if (interfaceNumber<_interfaces)
+	    System.out.println("ConnectInterface!");
+		if (interfaceNumber<node_interfaces)
 		{
-			_routingTable[interfaceNumber] = new RouteTableEntry(link, node);
+			node_table[interfaceNumber] = new RouteTableEntry(link, node);
 		}
 		else
 			System.out.println("Trying to connect to port not in router");
@@ -40,17 +49,17 @@ public class Router extends SimEnt{
 	private SimEnt getInterface(int networkAddress)
 	{
 		SimEnt routerInterface=null;
-		for(int i=0; i<_interfaces; i++)
-			if (_routingTable[i] != null)
+		for(int i=0; i<node_interfaces; i++)
+			if (node_table[i] != null)
 			{
-				if (((Node) _routingTable[i].node()).getAddr().networkId() == networkAddress)
+				if (((Node) node_table[i].node()).getAddr().networkId() == networkAddress)
 				{
-					routerInterface = _routingTable[i].link();
-				}
+				    routerInterface = node_table[i].link();
+                    return routerInterface;
+                }
 			}
 		return routerInterface;
 	}
-	
 	
 	// When messages are received at the router this method is called
 	
@@ -64,15 +73,19 @@ public class Router extends SimEnt{
 			send (sendNext, event, _now);
 	
 		}
+
+
+		// Not fully implemented...
 		if (event instanceof UpdateNodeIP)
 		{
 			// The router has been notified to update the router table
 
+            System.out.println("\n\n\nThe Router received a UpdateNodeIp package!\n\n\n");
 
-			if (Arrays.asList(_routingTable).contains(((UpdateNodeIP) event)._oldAddress))
+			if (Arrays.asList(node_table).contains(((UpdateNodeIP) event)._oldAddress))
 			{
 			    // If the old address is found, remove it and add the new network address
-				for (RouteTableEntry en : _routingTable)
+				for (RouteTableEntry en : node_table)
                 {
                     NetworkAddr oldAddr = ((UpdateNodeIP) event).getOld();
                     NetworkAddr newAddr = ((UpdateNodeIP) event).source();
@@ -80,14 +93,14 @@ public class Router extends SimEnt{
                     {
                     	// Found an old address in the routing table, remove and replace with new address
                         en = new RouteTableEntry(en.link(), new Node(newAddr.networkId(), newAddr.nodeId()));
-                        Arrays.asList(_routingTable).remove(((UpdateNodeIP) event)._oldAddress);
-                        Arrays.asList(_routingTable).add(en);
+                        Arrays.asList(node_table).remove(((UpdateNodeIP) event)._oldAddress);
+                        Arrays.asList(node_table).add(en);
 
                     }
                 }
 
 				//Now generate a new UpdateNodeIPNode to update all the other nodes in the network.
-                for (RouteTableEntry au : _routingTable)
+                for (RouteTableEntry au : node_table)
                 {
 
                     // Check that the address is NOT the source to prevent loops
@@ -97,20 +110,14 @@ public class Router extends SimEnt{
                         System.out.println("\n\n\nROUTER UPDATED TABLE!!\n\n\n");
 
                         // This will send a package to the router
-                        System.out.println("\n\n\nThe node is about to send a UpdateNodeIp package!\n\n\n");
+                        System.out.println("\n\n\nRouter recieved UpdateIP message!\n\n\n");
 
                         // New package to all nodes EXCEPT the node who triggered the update
                         SimEnt sendNext = getInterface(((Node)au.link())._toNetwork);
                         send (sendNext, event, _now);
                     }
                 }
-
-
 			}
-
-
-
-
 		}
 	}
 }

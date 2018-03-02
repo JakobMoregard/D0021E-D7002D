@@ -33,8 +33,14 @@ public class Node extends SimEnt {
 
 	public void updateIP(int network, int node)
 	{
+	    // Handle node disconnect in ROUTER
+
 	    oldAddr = _id;
 		_id = new NetworkAddr(network, node);
+
+		Link newLink = new Link();
+		newLink.setConnector(newLink);
+
 		// 1. Update the routers table.
 		send(this, new UpdateNodeIP(_id, oldAddr, _id, _seq++), 0);
 
@@ -88,17 +94,18 @@ public class Node extends SimEnt {
 			System.out.println("Node "+_id.networkId()+ "." + _id.nodeId() +" receives message with seq: "+((Message) ev).seq() + " at time "+SimEngine.getTime());
 			
 		}
+
+		// Not fully implemented
 		if (ev instanceof UpdateNodeIP)
 		{
-
-            System.out.println("\n\n\nThe node is about to send a UpdateNodeIp package!\n\n\n");
 		    // Check the sender
 		    if (((UpdateNodeIP) ev)._source == _id)
 		    {
 		        // This will send a package to the router
-                System.out.println("\n\n\nThe node is about to send a UpdateNodeIp package!\n\n\n");
+                System.out.println("\n\n\nThe node is about to send a UpdateNodeIp package!");
 
                 // New package ....
+                System.out.println("Sending a UpdateNodeIp package!\n\n\n");
                 send(_peer, new UpdateNodeIP(_id, oldAddr, _id, _seq++), 0);
 
 

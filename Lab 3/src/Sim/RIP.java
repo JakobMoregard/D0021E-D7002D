@@ -32,14 +32,9 @@ public class RIP implements Event{
         return router_table;
     }
 
-    public RouteTableEntry [] get_node_table(){
+    public RouteTableEntry [] get_node_table() {
         return node_table;
     }
-
-    public int number_of_jumps(){
-        return jumps;
-    }
-
 
     public void entering(SimEnt locale){}
 }
