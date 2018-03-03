@@ -61,10 +61,16 @@ public class Router extends SimEnt{
 
     public void printTable()
     {
-        for (RouteTableEntry router : router_table)
+        if (router_table != null)
         {
-            System.out.println("Node: " + router);
+            for (int i = 0; i < router_table.length; i++)
+            {
+                System.out.println("router: " + i);
+            }
+        } else {
+            System.out.println("No routes in the table!");
         }
+
     }
 
 	// This method searches for an entry in the routing table that matches
@@ -77,7 +83,7 @@ public class Router extends SimEnt{
 		for(int i=0; i<node_interfaces; i++)
 			if (node_table[i] != null)
 			{
-				if (((Node) node_table[i].node()).getAddr().networkId() == networkAddress)
+				if (((Node) node_table[i].device()).getAddr().networkId() == networkAddress)
 				{
 				    routerInterface = node_table[i].link();
                     return routerInterface;
@@ -120,7 +126,7 @@ public class Router extends SimEnt{
                 {
                     NetworkAddr oldAddr = ((UpdateNodeIP) event).getOld();
                     NetworkAddr newAddr = ((UpdateNodeIP) event).source();
-                    if (((Node)en.node())._id.equals(oldAddr))
+                    if (((Node)en.device())._id.equals(oldAddr))
                     {
                     	// Found an old address in the routing table, remove and replace with new address
                         en = new RouteTableEntry(en.link(), new Node(newAddr.networkId(), newAddr.nodeId()));
@@ -136,7 +142,7 @@ public class Router extends SimEnt{
 
                     // Check that the address is NOT the source to prevent loops
                     // After the check, notify all nodes of th new address
-                    if (!au.node().equals(((UpdateNodeIP) event)._source.nodeId()))
+                    if (!au.device().equals(((UpdateNodeIP) event)._source.nodeId()))
                     {
                         System.out.println("\n\n\nROUTER UPDATED TABLE!!\n\n\n");
 

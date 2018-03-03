@@ -9,8 +9,8 @@ public class LossyLink extends Link {
 	
 	Random randInt = new Random();
 	
-	public LossyLink(int delay, double jitter, int drop){
-		super();
+	public LossyLink(int link_cost, int delay, double jitter, int drop){
+		super(link_cost);
 		this.delay = delay;
 		this.jitter = jitter;
 		this.drop = drop;

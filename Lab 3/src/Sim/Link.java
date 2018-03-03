@@ -6,7 +6,7 @@ public class Link extends SimEnt{
 	protected SimEnt _connectorA=null;
 	protected SimEnt _connectorB=null;
 	protected int _now=0;
-	protected  int link_cost;
+	protected int link_cost;
 	
 	public Link(int link_cost)
 	{

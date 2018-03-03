@@ -40,6 +40,8 @@ public class Run {
 		Router R2 = new Router(2,2,2);
 
 		R2.connectInterfaceToRouter(1, R1TOR2, R1);
+
+		R1.printTable();
 		//routeNode.connectInterface(0, link1, host1);
 		//routeNode.connectInterface(1, link2, host2);
 		
