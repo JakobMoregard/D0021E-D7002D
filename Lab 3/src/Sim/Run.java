@@ -31,17 +31,18 @@ public class Run {
 		host1.setPeer(link1);
 		host2.setPeer(link2);
 
+
 		// Creates as router and connect
 		// links to it. Information about 
 		// the host connected to the other
 		// side of the link is also provided
 		// Note. A switch is created in same way using the Switch class
-		Router R1 = new Router(1,3, 2);
-		Router R2 = new Router(2,2,2);
+		Router R1 = new Router(1,3, 1);
+		Router R2 = new Router(2,2,1);
 
-		R2.connectInterfaceToRouter(1, R1TOR2, R1);
+		R1.connectInterfaceToRouter(0, R1TOR2, R2);
+		R2.connectInterfaceToRouter(0, R1TOR2, R1);
 
-		R1.printTable();
 		//routeNode.connectInterface(0, link1, host1);
 		//routeNode.connectInterface(1, link2, host2);
 		
@@ -74,7 +75,8 @@ public class Run {
 		}
 		catch (Exception e)
 		{
-			System.out.println("The motor seems to have a problem, time for service?");
+
+			System.out.println("The motor seems to have a problem, time for service?" +  e.toString());
 		}		
 
 

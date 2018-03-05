@@ -103,6 +103,13 @@ public class Router extends SimEnt{
 		    {
 		        // Send a new RIP package to every router (check for link)
                 System.out.println("\n\n\nSending RIP package!\n\n\n");
+                for (int i = 0; i < router_interfaces; i++)
+                {
+                    SimEnt link = router_table[i].link();
+                    ((RIP) event).jumps += 1;
+                    send(link,event,0);
+                }
+
 
             } else if (((RIP) event).origin == this._RID && ((RIP) event).jumps > 0){
 		        // The broadcast has somehow returned, do nothing to drop the package...
@@ -116,6 +123,7 @@ public class Router extends SimEnt{
                     System.out.println("\n\n\nReceiving RIP package!\n\n\n");
 
                     // Compare and update the table (router/nodes)
+                    // ((Link)link).link_cost;
 
                     // Add 1 to jumps and forward the package to all routers
                     ((RIP) event).jumps += 1;
