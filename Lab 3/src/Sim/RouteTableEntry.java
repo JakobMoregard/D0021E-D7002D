@@ -10,6 +10,8 @@ public class RouteTableEntry extends TableEntry{
 	{
 		super(link, device);
 	}
+
+	// Needs a getInterface (used in router)
 	
 	public SimEnt link()
 	{

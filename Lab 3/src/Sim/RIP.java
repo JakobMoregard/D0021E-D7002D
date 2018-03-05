@@ -11,16 +11,12 @@ public class RIP implements Event{
     // The node table
     private RouteTableEntry [] node_table;
     // A string (name) of the original sender
-    private String origin;
+    protected int origin;
     // The link used to transmit the package
     private Link link;
 
-    RIP() {
+    RIP(int connection_cost, RouteTableEntry [] router_table, RouteTableEntry [] node_table, int origin) {
         super();
-    }
-
-    public void send_update(int connection_cost, Link link, RouteTableEntry [] router_table, RouteTableEntry [] node_table, String origin){
-
         this.connection_cost = connection_cost;
         this.router_table = router_table;
         this.node_table = node_table;

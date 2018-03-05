@@ -59,6 +59,7 @@ public class Run {
 
 		//Trigger the host to change
         // host2.updateIP(3,1);
+		R1.sendRIP();
 
 		// host2 will send 2 messages with time interval 10 to network 1, node 1. Sequence starts with number 10
 		// host2.StartSending(1, 1, 2, 10, 10); 

@@ -59,19 +59,10 @@ public class Router extends SimEnt{
         ((Link) link).setConnector(this);
     }
 
-    public void printTable()
-    {
-        if (router_table != null)
-        {
-            for (int i = 0; i < router_table.length; i++)
-            {
-                System.out.println("router: " + i);
-            }
-        } else {
-            System.out.println("No routes in the table!");
-        }
-
-    }
+    public void sendRIP()
+	{
+	    send(this, new RIP(0, router_table, node_table, this._RID), 0);
+	}
 
 	// This method searches for an entry in the routing table that matches
 	// the network number in the destination field of a messages. The link
@@ -108,7 +99,36 @@ public class Router extends SimEnt{
 		// If we get a RIP package
 		if (event instanceof RIP)
 		{
-		    System.out.println("\n\n\nDetected RIP package!\n\n\n");
+		    if (((RIP) event).origin == this._RID && ((RIP) event).jumps == 0)
+		    {
+		        // Send a new RIP package to every router (check for link)
+                System.out.println("\n\n\nSending RIP package!\n\n\n");
+
+            } else if (((RIP) event).origin == this._RID && ((RIP) event).jumps > 0){
+		        // The broadcast has somehow returned, do nothing to drop the package...
+
+            } else {
+
+		        // Check if the package is less than 15 otherwise do nothing to drop the package
+		        if (((RIP) event).jumps < 15)
+                {
+
+                    System.out.println("\n\n\nReceiving RIP package!\n\n\n");
+
+                    // Compare and update the table (router/nodes)
+
+                    // Add 1 to jumps and forward the package to all routers
+                    ((RIP) event).jumps += 1;
+
+                    // forward to all routers (check for link)
+
+                }
+
+                // Do nothing to drop package...
+
+            }
+
+
         }
 
 
