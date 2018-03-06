@@ -105,6 +105,7 @@ public class Router extends SimEnt{
                 System.out.println("\n\n\nSending RIP package!\n\n\n");
                 for (int i = 0; i < router_interfaces; i++)
                 {
+                	// Check if a connection (network) is connected, otherwise it will get a null pointer exception...
                     SimEnt link = router_table[i].link();
                     ((RIP) event).jumps += ((Link) router_table[i].link()).link_cost;
                     send(link,event,0);
