@@ -127,6 +127,10 @@ public class Router extends SimEnt{
                     System.out.println("\n\n\nReceiving and forwarding RIP package from router " + this._RID  + "!\n\n\n");
 
                     // Compare and update the table (router/nodes)
+                    // for each, check if in table and if the cost is less than the table, update
+                    // if not in table, add the route and cost
+
+                    // Timeout check and mark poison on any route not responding
 
                     // forward to all routers (check for link)
                     for (int i = 0; i < router_interfaces; i++)
