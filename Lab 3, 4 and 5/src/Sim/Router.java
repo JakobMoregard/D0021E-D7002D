@@ -128,7 +128,7 @@ public class Router extends SimEnt{
 
                     // Compare and update the table (router/nodes)
                     // for each, check if in table and if the cost is less than the table, update
-                    // if not in table, add the route and cost etc.
+                    // if not in table, add the route and cost etc...
 
                     // Timeout check for router_table (RFC) and mark poison on any route not responding
 
