@@ -114,6 +114,7 @@ public class Router extends SimEnt{
 
             } else if (((RIP) event).origin == this._RID && ((RIP) event).jumps > 0){
 		        // The broadcast has somehow returned, do nothing to drop the package...
+                System.out.println("\nWARNING: Got a RIP package created from this host! Dropping the package to prevent loops!\n");
 
             } else {
 
@@ -130,7 +131,14 @@ public class Router extends SimEnt{
                     ((RIP) event).jumps += 1;
 
                     // forward to all routers (check for link)
-
+                    System.out.println("\n\n\nSending RIP package!\n\n\n");
+                    for (int i = 0; i < router_interfaces; i++)
+                    {
+                        // Check if a connection (network) is connected, otherwise it will get a null pointer exception...
+                        SimEnt link = router_table[i].link();
+                        ((RIP) event).jumps += ((Link) router_table[i].link()).link_cost;
+                        send(link,event,0);
+                    }
                 }
 
 
