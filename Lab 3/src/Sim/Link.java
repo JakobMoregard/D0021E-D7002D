@@ -41,5 +41,19 @@ public class Link extends SimEnt{
 				send(_connectorA, ev, _now);
 			}
 		}
+
+        // Allow RIP packages
+        if (ev instanceof RIP)
+        {
+            System.out.println("Link recv RIP broadcast, passes it through");
+            if (src == _connectorA)
+            {
+                send(_connectorB, ev, _now);
+            }
+            else
+            {
+                send(_connectorA, ev, _now);
+            }
+        }
 	}	
 }

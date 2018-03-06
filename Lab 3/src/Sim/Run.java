@@ -43,6 +43,8 @@ public class Run {
 		R1.connectInterfaceToRouter(0, R1TOR2, R2);
 		R2.connectInterfaceToRouter(0, R1TOR2, R1);
 
+		System.out.println("Connected link with first router: " + R1TOR2._connectorA.toString() + " and second router: " + R1TOR2._connectorB.toString());
+		
 		//routeNode.connectInterface(0, link1, host1);
 		//routeNode.connectInterface(1, link2, host2);
 		

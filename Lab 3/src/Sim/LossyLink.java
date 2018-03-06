@@ -51,5 +51,39 @@ public class LossyLink extends Link {
 				}
 			}
 		}
+
+		// Allow RIP packages
+		if (ev instanceof RIP)
+        {
+
+            // Generate a diviation and multiply the jitter.
+            double delay2 = randInt.nextGaussian() * jitter;
+            if (delay2 < 0) {
+                // If the diviation is negative, recalculate
+                delay2 = randInt.nextGaussian() * jitter;
+            }
+
+            // Set the delay and jitter
+            double newTime = _now + delay + delay2;
+
+            // Check if the package should be dropped
+            int rand = 1 + randInt.nextInt(100);
+            if (rand < drop){
+                System.out.println("LossyLink dropped the RIP package!");
+                return;
+            } else {
+
+                // If the package is not dropped, send as usual
+                System.out.println("LossyLink recv RIP package, passes it through");
+                if (src == _connectorA)
+                {
+                    send(_connectorB, ev, newTime);
+                }
+                else
+                {
+                    send(_connectorA, ev, newTime);
+                }
+            }
+        }
 	}	
 }

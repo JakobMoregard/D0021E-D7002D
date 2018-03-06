@@ -106,7 +106,7 @@ public class Router extends SimEnt{
                 for (int i = 0; i < router_interfaces; i++)
                 {
                     SimEnt link = router_table[i].link();
-                    ((RIP) event).jumps += 1;
+                    ((RIP) event).jumps += ((Link) router_table[i].link()).link_cost;
                     send(link,event,0);
                 }
 
@@ -131,6 +131,7 @@ public class Router extends SimEnt{
                     // forward to all routers (check for link)
 
                 }
+
 
                 // Do nothing to drop package...
 
