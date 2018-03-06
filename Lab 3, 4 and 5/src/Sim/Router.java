@@ -134,7 +134,7 @@ public class Router extends SimEnt{
                         // Check if a connection (network) is connected, otherwise it will get a null pointer exception...
                         SimEnt link = router_table[i].link();
                         ((RIP) event).jumps += 1;
-                        ((RIP) event).connection_cost += ((Link) router_table[i].link()).link_cost;
+                        ((RIP) event).connection_cost = ((Link) router_table[i].link()).link_cost;
                         ((RIP) event).last_router_id = this._RID;
                         send(link,event,0);
                     }
