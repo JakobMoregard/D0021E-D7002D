@@ -130,7 +130,7 @@ public class Router extends SimEnt{
                     // for each, check if in table and if the cost is less than the table, update
                     // if not in table, add the route and cost
 
-                    // Timeout check and mark poison on any route not responding
+                    // Timeout check for router_table (RFC) and mark poison on any route not responding
 
                     // forward to all routers (check for link)
                     for (int i = 0; i < router_interfaces; i++)
