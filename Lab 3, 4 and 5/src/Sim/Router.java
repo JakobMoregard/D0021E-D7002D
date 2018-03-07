@@ -99,7 +99,7 @@ public class Router extends SimEnt{
 		// If we get a RIP package
 		if (event instanceof RIP)
 		{
-		    
+
 		    if (((RIP) event).origin == this._RID && ((RIP) event).jumps == 0)
 		    {
 		        // Send a new RIP package to every router (check for link)
