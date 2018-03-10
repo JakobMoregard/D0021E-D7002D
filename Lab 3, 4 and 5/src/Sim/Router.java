@@ -99,13 +99,15 @@ public class Router extends SimEnt{
 		// If we get a RIP package
 		if (event instanceof RIP)
 		{
+
 		    if (((RIP) event).origin == this._RID && ((RIP) event).jumps == 0)
 		    {
 		        // Send a new RIP package to every router (check for link)
-                System.out.println("\n\n\nSending RIP package!\n\n\n");
+                System.out.println("\n\n\nSending RIP package from router " + this._RID  + "!\n\n\n");
                 for (int i = 0; i < router_interfaces; i++)
                 {
                 	// Check if a connection (network) is connected, otherwise it will get a null pointer exception...
+<<<<<<< HEAD
                     try {
                         SimEnt link = router_table[i].link();
                         ((RIP) event).jumps += ((Link) router_table[i].link()).link_cost;
@@ -113,12 +115,19 @@ public class Router extends SimEnt{
                     }catch(NullPointerException e){
                         System.out.println("Empty routing entry: " + i);
                     }
+=======
+                    SimEnt link = router_table[i].link();
+                    ((RIP) event).jumps += 1;
+                    ((RIP) event).connection_cost = ((Link) router_table[i].link()).link_cost;
+                    ((RIP) event).last_router_id = this._RID;
+                    send(link,event,0);
+>>>>>>> fbbc7f531fd531c9a9076d350af8dc06444cb38e
                 }
 
 
             } else if (((RIP) event).origin == this._RID && ((RIP) event).jumps > 0){
 		        // The broadcast has somehow returned, do nothing to drop the package...
-                System.out.println("\nWARNING: Got a RIP package created from this host! Dropping the package to prevent loops!\n");
+                System.out.println("\nWARNING: Got a RIP package created from this host! Dropping the package to prevent loops! \nAmmount of jumps: " + ((RIP) event).jumps + ".\nLast Link cost: " + ((RIP) event).connection_cost + ".\nSent from router: " + ((RIP) event).last_router_id + ".");
 
             } else {
 
@@ -126,15 +135,16 @@ public class Router extends SimEnt{
 		        if (((RIP) event).jumps < 15)
                 {
 
-                    System.out.println("\n\n\nReceiving RIP package!\n\n\n");
+                    System.out.println("\n\n\nReceiving and forwarding RIP package from router " + this._RID  + "!\n\n\n");
 
                     // Compare and update the table (router/nodes)
-                    // ((Link)link).link_cost;
+                    // for each, check if in table and if the cost is less than the table, update
+                    // if not in table, add the route and cost etc...
 
-                    // Add 1 to jumps and forward the package to all routers
-                    ((RIP) event).jumps += 1;
+                    // Timeout check for router_table (RFC) and mark poison on any route not responding
 
                     // forward to all routers (check for link)
+<<<<<<< HEAD
                     System.out.println("\n\nSending RIP package!\n");
                     for (int i = 0; i < router_interfaces; i++) {
                         // Check if a connection (network) is connected, otherwise it will get a null pointer exception...
@@ -145,6 +155,16 @@ public class Router extends SimEnt{
                         } catch (NullPointerException e) {
                             System.out.println("Empty routing entry: " + i);
                         }
+=======
+                    for (int i = 0; i < router_interfaces; i++)
+                    {
+                        // Check if a connection (network) is connected, otherwise it will get a null pointer exception...
+                        SimEnt link = router_table[i].link();
+                        ((RIP) event).jumps += 1;
+                        ((RIP) event).connection_cost = ((Link) router_table[i].link()).link_cost;
+                        ((RIP) event).last_router_id = this._RID;
+                        send(link,event,0);
+>>>>>>> fbbc7f531fd531c9a9076d350af8dc06444cb38e
                     }
                 }
 
