@@ -102,7 +102,7 @@ public class Router extends SimEnt{
 		    if (((RIP) event).origin == this._RID && ((RIP) event).jumps == 0)
 		    {
 		        // Send a new RIP package to every router (check for link)
-                System.out.println("\n\n\nSending RIP package from router " + this._RID  + "!\n\n\n");
+                System.out.println("\n\nSending RIP package from router " + this._RID  + "!\n\n");
                 for (int i = 0; i < router_interfaces; i++)
                 {
                 	// Check if a connection (network) is connected, otherwise it will get a null pointer exception...
@@ -118,14 +118,14 @@ public class Router extends SimEnt{
                 }
             } else if (((RIP) event).origin == this._RID && ((RIP) event).jumps > 0){
 		        // The broadcast has somehow returned, do nothing to drop the package...
-                System.out.println("\nWARNING: Got a RIP package created from this host! Dropping the package to prevent loops! \nAmmount of jumps: " + ((RIP) event).jumps + ".\nLast Link cost: " + ((RIP) event).connection_cost + ".\nSent from router: " + ((RIP) event).last_router_id + ".");
+                System.out.println("\nWARNING: Got a RIP package created from this host! Dropping the package to prevent loops! \nAmount of jumps: " + ((RIP) event).jumps + ".\nLast Link cost: " + ((RIP) event).connection_cost + ".\nSent from router: " + ((RIP) event).last_router_id + ".");
 
             } else {
 
 		        // Check if the package is less than 15 otherwise do nothing to drop the package
 		        if (((RIP) event).jumps < 15)
                 {
-                    System.out.println("\n\n\nReceiving and forwarding RIP package from router " + this._RID  + "!\n\n\n");
+                    System.out.println("\n\nReceiving and forwarding RIP package from router " + this._RID  + "!\n\n");
 
                     // Compare and update the table (router/nodes)
                     // for each, check if in table and if the cost is less than the table, update
@@ -134,7 +134,7 @@ public class Router extends SimEnt{
                     // Timeout check for router_table (RFC) and mark poison on any route not responding
 
                     // forward to all routers (check for link)
-                    System.out.println("\n\nSending RIP package!\n");
+                    System.out.println("\nSending RIP package!\n");
                     for (int i = 0; i < router_interfaces; i++)
                     {
                         try {
@@ -151,12 +151,12 @@ public class Router extends SimEnt{
                 }
                 // Do nothing to drop package...
             }
-            System.out.println("Node table: ");
+            System.out.println("\nNode table for R" + _RID);
 		    for(int i =  0; i < node_table.length; i++){
 		        System.out.println("Entry " + i + ": " + node_table[i]);
             }
 
-            System.out.println("\nRouting table: ");
+            System.out.println("\nRouting table for R" + _RID);
             for(int i =  0; i < router_table.length; i++){
                 System.out.println("Entry " + i + ": " + router_table[i]);
             }
@@ -167,7 +167,7 @@ public class Router extends SimEnt{
 		{
 			// The router has been notified to update the router table
 
-            System.out.println("\n\n\nThe Router received a UpdateNodeIp package!\n\n\n");
+            System.out.println("\n\nThe Router received a UpdateNodeIp package!\n\n");
 
 			if (Arrays.asList(node_table).contains(((UpdateNodeIP) event)._oldAddress))
 			{
@@ -194,10 +194,10 @@ public class Router extends SimEnt{
                     // After the check, notify all nodes of th new address
                     if (!au.device().equals(((UpdateNodeIP) event)._source.nodeId()))
                     {
-                        System.out.println("\n\n\nROUTER UPDATED TABLE!!\n\n\n");
+                        System.out.println("\n\nROUTER UPDATED TABLE!!\n\n");
 
                         // This will send a package to the router
-                        System.out.println("\n\n\nRouter recieved UpdateIP message!\n\n\n");
+                        System.out.println("\n\nRouter recieved UpdateIP message!\n\n");
 
                         // New package to all nodes EXCEPT the node who triggered the update
                         SimEnt sendNext = getInterface(((Node)au.link())._toNetwork);
