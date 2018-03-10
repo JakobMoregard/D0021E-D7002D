@@ -84,7 +84,6 @@ public class Router extends SimEnt{
 	}
 	
 	// When messages are received at the router this method is called
-	
 	public void recv(SimEnt source, Event event)
 	{
 		if (event instanceof Message)
@@ -107,24 +106,16 @@ public class Router extends SimEnt{
                 for (int i = 0; i < router_interfaces; i++)
                 {
                 	// Check if a connection (network) is connected, otherwise it will get a null pointer exception...
-<<<<<<< HEAD
                     try {
                         SimEnt link = router_table[i].link();
-                        ((RIP) event).jumps += ((Link) router_table[i].link()).link_cost;
+                        ((RIP) event).jumps += 1;
+                        ((RIP) event).connection_cost = ((Link) router_table[i].link()).link_cost;
+                        ((RIP) event).last_router_id = this._RID;
                         send(link, event, 0);
-                    }catch(NullPointerException e){
+                    }catch(NullPointerException e) {
                         System.out.println("Empty routing entry: " + i);
                     }
-=======
-                    SimEnt link = router_table[i].link();
-                    ((RIP) event).jumps += 1;
-                    ((RIP) event).connection_cost = ((Link) router_table[i].link()).link_cost;
-                    ((RIP) event).last_router_id = this._RID;
-                    send(link,event,0);
->>>>>>> fbbc7f531fd531c9a9076d350af8dc06444cb38e
                 }
-
-
             } else if (((RIP) event).origin == this._RID && ((RIP) event).jumps > 0){
 		        // The broadcast has somehow returned, do nothing to drop the package...
                 System.out.println("\nWARNING: Got a RIP package created from this host! Dropping the package to prevent loops! \nAmmount of jumps: " + ((RIP) event).jumps + ".\nLast Link cost: " + ((RIP) event).connection_cost + ".\nSent from router: " + ((RIP) event).last_router_id + ".");
@@ -134,7 +125,6 @@ public class Router extends SimEnt{
 		        // Check if the package is less than 15 otherwise do nothing to drop the package
 		        if (((RIP) event).jumps < 15)
                 {
-
                     System.out.println("\n\n\nReceiving and forwarding RIP package from router " + this._RID  + "!\n\n\n");
 
                     // Compare and update the table (router/nodes)
@@ -144,33 +134,22 @@ public class Router extends SimEnt{
                     // Timeout check for router_table (RFC) and mark poison on any route not responding
 
                     // forward to all routers (check for link)
-<<<<<<< HEAD
                     System.out.println("\n\nSending RIP package!\n");
-                    for (int i = 0; i < router_interfaces; i++) {
-                        // Check if a connection (network) is connected, otherwise it will get a null pointer exception...
-                        try {
-                            SimEnt link = router_table[i].link();
-                            ((RIP) event).jumps += ((Link) router_table[i].link()).link_cost;
-                            send(link, event, 0);
-                        } catch (NullPointerException e) {
-                            System.out.println("Empty routing entry: " + i);
-                        }
-=======
                     for (int i = 0; i < router_interfaces; i++)
                     {
-                        // Check if a connection (network) is connected, otherwise it will get a null pointer exception...
-                        SimEnt link = router_table[i].link();
-                        ((RIP) event).jumps += 1;
-                        ((RIP) event).connection_cost = ((Link) router_table[i].link()).link_cost;
-                        ((RIP) event).last_router_id = this._RID;
-                        send(link,event,0);
->>>>>>> fbbc7f531fd531c9a9076d350af8dc06444cb38e
+                        try {
+                            // Check if a connection (network) is connected, otherwise it will get a null pointer exception...
+                            SimEnt link = router_table[i].link();
+                            ((RIP) event).jumps += 1;
+                            ((RIP) event).connection_cost = ((Link) router_table[i].link()).link_cost;
+                            ((RIP) event).last_router_id = this._RID;
+                            send(link, event, 0);
+                        }catch (NullPointerException e){
+                            System.out.println("Empty routing entry: " + i);
+                        }
                     }
                 }
-
-
                 // Do nothing to drop package...
-
             }
             System.out.println("Node table: ");
 		    for(int i =  0; i < node_table.length; i++){
@@ -181,10 +160,7 @@ public class Router extends SimEnt{
             for(int i =  0; i < router_table.length; i++){
                 System.out.println("Entry " + i + ": " + router_table[i]);
             }
-
-
         }
-
 
 		// Not fully implemented...
 		if (event instanceof UpdateNodeIP)

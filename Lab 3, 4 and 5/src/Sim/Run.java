@@ -10,22 +10,11 @@ public class Run {
 		Link link2 = new Link(1);
 		Link R1TOR2 = new Link(1);
 		
-		// Create two end hosts that will be
-		// communicating via the router
-		//Node host1 = new Node(1,1);
-		//Node host2 = new Node(2,1);
 
 		//CBR
 		Generator_CBR host1 = new Generator_CBR(1,1);
         Node host2 = new Node(2,1);
 
-		//NORMAL
-		//Generator_NORMAL host1 = new Generator_NORMAL(1,1);
-		//Sink host2 = new Sink(2,1);
-
-		//POISSON
-		//Generator_POISSON host1 = new Generator_POISSON(1,1);
-		//Sink host2 = new Sink(2,1);
 
 		//Connect links to hosts
 		host1.setPeer(link1);
