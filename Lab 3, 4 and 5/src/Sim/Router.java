@@ -106,9 +106,13 @@ public class Router extends SimEnt{
                 for (int i = 0; i < router_interfaces; i++)
                 {
                 	// Check if a connection (network) is connected, otherwise it will get a null pointer exception...
-                    SimEnt link = router_table[i].link();
-                    ((RIP) event).jumps += ((Link) router_table[i].link()).link_cost;
-                    send(link,event,0);
+                    try {
+                        SimEnt link = router_table[i].link();
+                        ((RIP) event).jumps += ((Link) router_table[i].link()).link_cost;
+                        send(link, event, 0);
+                    }catch(NullPointerException e){
+                        System.out.println("Empty routing entry: " + i);
+                    }
                 }
 
 
@@ -131,19 +135,31 @@ public class Router extends SimEnt{
                     ((RIP) event).jumps += 1;
 
                     // forward to all routers (check for link)
-                    System.out.println("\n\n\nSending RIP package!\n\n\n");
-                    for (int i = 0; i < router_interfaces; i++)
-                    {
+                    System.out.println("\n\nSending RIP package!\n");
+                    for (int i = 0; i < router_interfaces; i++) {
                         // Check if a connection (network) is connected, otherwise it will get a null pointer exception...
-                        SimEnt link = router_table[i].link();
-                        ((RIP) event).jumps += ((Link) router_table[i].link()).link_cost;
-                        send(link,event,0);
+                        try {
+                            SimEnt link = router_table[i].link();
+                            ((RIP) event).jumps += ((Link) router_table[i].link()).link_cost;
+                            send(link, event, 0);
+                        } catch (NullPointerException e) {
+                            System.out.println("Empty routing entry: " + i);
+                        }
                     }
                 }
 
 
                 // Do nothing to drop package...
 
+            }
+            System.out.println("Node table: ");
+		    for(int i =  0; i < node_table.length; i++){
+		        System.out.println("Entry " + i + ": " + node_table[i]);
+            }
+
+            System.out.println("\nRouting table: ");
+            for(int i =  0; i < router_table.length; i++){
+                System.out.println("Entry " + i + ": " + router_table[i]);
             }
 
 

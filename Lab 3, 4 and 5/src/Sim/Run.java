@@ -37,39 +37,24 @@ public class Run {
 		// the host connected to the other
 		// side of the link is also provided
 		// Note. A switch is created in same way using the Switch class
-		Router R1 = new Router(1,3, 1);
-		Router R2 = new Router(2,2,1);
+		Router R1 = new Router(1,3, 5);
+		Router R2 = new Router(2,2,2);
+
+		R1.connectInterfaceToNode(1, link1, host1);
+		R2.connectInterfaceToNode(1, link2, host2);
 
 		R1.connectInterfaceToRouter(0, R1TOR2, R2);
 		R2.connectInterfaceToRouter(0, R1TOR2, R1);
 
-		System.out.println("Connected link with first router: " + R1TOR2._connectorA.toString() + " and second router: " + R1TOR2._connectorB.toString());
-		
-		//routeNode.connectInterface(0, link1, host1);
-		//routeNode.connectInterface(1, link2, host2);
-		
-		// Generate some traffic
-		// host1 will send 3 messages with time interval 5 to network 2, node 1. Sequence starts with number 1
+		System.out.println("Connected link with first router: " + R1TOR2._connectorA.toString() +
+				" and second router: " + R1TOR2._connectorB.toString());
 
-        //CBR
-		//host1.StartSending(2, 2, 10,1);
 
-		//Normal
-        //host1.StartSendingNormal(2,2,2,10,10000);
-
-        //POISSON
-        //host1.StartSending(2,2,5,10);
-
-		//Trigger the host to change
-        // host2.updateIP(3,1);
 		R1.sendRIP();
 
-		// host2 will send 2 messages with time interval 10 to network 1, node 1. Sequence starts with number 10
-		// host2.StartSending(1, 1, 2, 10, 10); 
-		
 		// Start the simulation engine and of we go!
 		Thread t=new Thread(SimEngine.instance());
-	
+
 		t.start();
 		try
 		{
@@ -77,11 +62,7 @@ public class Run {
 		}
 		catch (Exception e)
 		{
-
 			System.out.println("The motor seems to have a problem, time for service?" +  e.toString());
-		}		
-
-
-
+		}
 	}
 }
