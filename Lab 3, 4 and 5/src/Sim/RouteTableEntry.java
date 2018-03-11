@@ -5,14 +5,16 @@ package Sim;
 // connected to the other side of the link
 
 public class RouteTableEntry extends TableEntry{
-
-	RouteTableEntry(SimEnt link, SimEnt device)
+	private int _interfacenr;
+	RouteTableEntry(SimEnt link, SimEnt device, int interfacenr)
 	{
 		super(link, device);
+		_interfacenr = interfacenr;
 	}
 
 	// Needs a getInterface (used in router)
-	
+	public int interfacenr(){ return this._interfacenr; }
+
 	public SimEnt link()
 	{
 		return super.link();

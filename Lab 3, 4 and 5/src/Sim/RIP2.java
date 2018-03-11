@@ -1,11 +1,13 @@
 package Sim;
 
-public class RIP implements Event{
+public class RIP2 implements Event{
 
     // The amount of jumps of the package
     protected int jumps = 0;
     // The cost of using the link
     protected int connection_cost;
+    // The router table
+    private RouteTableEntry [] router_table;
     // The node table
     private RouteTableEntry [] node_table;
     // A string (name) of the original sender
@@ -15,12 +17,17 @@ public class RIP implements Event{
 
     protected int last_router_id;
 
-    RIP(int connection_cost, RouteTableEntry [] node_table, int origin) {
+    RIP2(int connection_cost, RouteTableEntry [] router_table, RouteTableEntry [] node_table, int origin) {
         super();
         this.connection_cost = connection_cost;
+        this.router_table = router_table;
         this.node_table = node_table;
         this.link = link;
         this.origin = origin;
+    }
+
+    public RouteTableEntry [] get_router_table(){
+        return router_table;
     }
 
     public RouteTableEntry [] get_node_table() {
