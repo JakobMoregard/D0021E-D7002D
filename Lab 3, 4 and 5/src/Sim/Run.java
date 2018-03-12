@@ -49,34 +49,31 @@ public class Run {
 		R3.connectInterfaceToNode(0, link3, host3);
 		R4.connectInterfaceToNode(0, link4, host4);
 
-		R1.connectInterfaceToNode(3, R1TOR2, R2);
-		R2.connectInterfaceToNode(3, R1TOR2, R1);
-		R2.connectInterfaceToNode(4, R2TOR3, R3);
-		R3.connectInterfaceToNode(4, R2TOR3, R2);
+		R1.connectInterfaceToNode(2, R1TOR2, R2);
+		R2.connectInterfaceToNode(1, R1TOR2, R1);
+		R2.connectInterfaceToNode(3, R2TOR3, R3);
+		R3.connectInterfaceToNode(2, R2TOR3, R2);
 
 		R3.connectInterfaceToNode(6, R3TOR4, R4);
-	R4.connectInterfaceToNode(6, R3TOR4, R3);
+		R4.connectInterfaceToNode(6, R3TOR4, R3);
 
-		//Temporary fix to check if you can send between networks
-		//Remove these when merging routing tables work
-		//R1.setRemote(2, R1TOR2, host2);
-		//R1.setRemote2(2, R1TOR2, host3);
-
-		//R1.setRemote3(8, R1TOR2, host4);
-		//R2.setRemote3(8, R3TOR4, host4);
-		//R2.setRemote2(4, R2TOR3, host3);
-		//R3.setRemote2(6, R3TOR4, host4);
 
 		System.out.println("Connected link with first router: " + R1TOR2._connectorA.toString() +
 				" and second router: " + R1TOR2._connectorB.toString());
 
-
+		R1.sendRIP();
+		R2.sendRIP(); //Using multiple of these to delay the startSending and allowing the table to upd
+		R3.sendRIP();
+		R4.sendRIP();
 		R1.sendRIP();
 		R2.sendRIP();
 		R3.sendRIP();
 		R4.sendRIP();
-		//host1.StartSending(2,1,4,4);
-		host4.StartSending(1,1,1,1,0);
+		R1.sendRIP();
+		R2.sendRIP();
+		R3.sendRIP();
+		R4.sendRIP();
+		host4.StartSending(1,1,2,50,0); //CTRL+F to finde the node :)
 
 		// Start the simulation engine and of we go!
 		Thread t=new Thread(SimEngine.instance());
@@ -90,5 +87,10 @@ public class Run {
 		{
 			System.out.println("The motor seems to have a problem, time for service?" +  e.toString());
 		}
+		System.out.println("_____\nFinal Tables");
+		R1.printRouting(R1.getNode_table());
+		R2.printRouting(R2.getNode_table());
+		R3.printRouting(R3.getNode_table());
+		R4.printRouting(R4.getNode_table());
 	}
 }
