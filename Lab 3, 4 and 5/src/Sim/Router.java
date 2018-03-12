@@ -2,6 +2,10 @@ package Sim;
 
 // This class implements a simple router
 
+
+/**
+ * TODO: Update routing tables, cost of links etc
+ */
 public class Router extends SimEnt{
 
     // Rename of the tables to seperate the nodes and the routers
@@ -18,14 +22,18 @@ public class Router extends SimEnt{
 		this._RID = RID;
 
 	    // Node table
-		node_table = new RouteTableEntry[node_interfaces];
-		this.node_interfaces = node_interfaces;
+		//node_table = new RouteTableEntry[node_interfaces];
+		node_table = new RouteTableEntry[10];
+		this.node_interfaces = node_table.length;
 	}
 	public void setRemote(int interfaceNr, SimEnt link, SimEnt node){
 	    node_table[4] = new RouteTableEntry(link, node, interfaceNr);
     }
     public void setRemote2(int interfaceNr, SimEnt link, SimEnt node){
         node_table[2] = new RouteTableEntry(link, node, interfaceNr);
+    }
+    public void setRemote3(int interfaceNr, SimEnt link, SimEnt node){
+        node_table[8] = new RouteTableEntry(link, node, interfaceNr);
     }
 	// This method connects links to the router and also informs the 
 	// router of the host connects to the other end of the link
@@ -69,20 +77,22 @@ public class Router extends SimEnt{
 			}
 		return routerInterface;
 	}
-	
+	private void printRouting(RouteTableEntry[] node_table){
+        System.out.println("\nNode table for R" + _RID);
+        for(int i =  0; i < node_table.length; i++){
+            try {
+                System.out.println("Entry " + i + ": " + node_table[i] + " : " + node_table[i].interfacenr());
+            } catch (Exception e){
+                System.out.println("Entry " + i + ": " + node_table[i]);
+            }
+        }
+        System.out.println();
+    }
 	// When messages are received at the router this method is called
 	public void recv(SimEnt source, Event event)
 	{
 		if (event instanceof Message)
-		{/*
-		    for(int i = 0; i < node_table.length; i++) {
-                try {
-                    if (((Message) event).destination().networkId() == ((Node) node_table[i].device())._network) {
-                        System.out.println(_RID + "____SAMMA Netid____"  + i);
-                    }
-                } catch (Exception e) {
-                }
-            }*/
+		{
 			System.out.println("Router " + _RID +" handles packet with seq: " + ((Message) event).seq()+" from node: "+((Message) event).source().networkId()+"." + ((Message) event).source().nodeId() );
 			SimEnt sendNext = getInterface(((Message) event).destination().networkId());
 			System.out.println("Router sends to node: " + ((Message) event).destination().networkId()+"." + ((Message) event).destination().nodeId());		
@@ -120,10 +130,45 @@ public class Router extends SimEnt{
                 {
                     System.out.println("\nReceiving and forwarding RIP package from router " + this._RID  + "!\n");
 
+
                     // Compare and update the table (router/nodes)
                     // for each, check if in table and if the cost is less than the table, update
                     // if not in table, add the route and cost etc...
-
+                    RouteTableEntry [] ripRout = ((RIP) event).get_node_table();
+                    System.out.println("Table before");
+                    printRouting(node_table);
+                    System.out.println("Table to merge with");
+                    printRouting(ripRout);
+                    boolean set = false;
+                    for(int i = 0; i<ripRout.length; i++){
+                        //System.out.println("ROUTING TABLE SENT BY RIP");
+                        // printRouting(ripRout);
+                        if(ripRout[i] != null) {
+                            for (int j = 0; j < node_table.length; j++) {
+                                try {
+                                    if (((Node) node_table[j].device())._id == ((Node) ripRout[i].device())._id) {
+                                        System.out.println("Node Exists in table " + j + i);
+                                        //BÖR KOLLA SÅ Cost är mindre
+                                        node_table[j] = ripRout[i];
+                                        set = true;
+                                        break;
+                                    }
+                                }catch (Exception e){
+                                    continue;
+                                }
+                            }
+                            if(!set){
+                                for(int k = 0; k < node_table.length; k++){
+                                    if(node_table[k] == null){
+                                        node_table[k] = ripRout[i];
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    System.out.println("Table after");
+                    printRouting(node_table);
                     // Timeout check for router_table (RFC) and mark poison on any route not responding
 
                     // forward to all routers (check for link)
@@ -148,15 +193,6 @@ public class Router extends SimEnt{
                 }
                 // Do nothing to drop package...
             }
-            System.out.println("\nNode table for R" + _RID);
-            for(int i =  0; i < node_table.length; i++){
-                try {
-                    System.out.println("Entry " + i + ": " + node_table[i] + " : " + node_table[i].interfacenr());
-                } catch (Exception e){
-                    System.out.println("Entry " + i + ": " + node_table[i]);
-                }
-            }
-            System.out.println();
         }
 /*
 		// Not fully implemented...
