@@ -61,18 +61,11 @@ public class Run {
 		System.out.println("Connected link with first router: " + R1TOR2._connectorA.toString() +
 				" and second router: " + R1TOR2._connectorB.toString());
 
-		R1.sendRIP();
-		R2.sendRIP(); //Using multiple of these to delay the startSending and allowing the table to upd
-		R3.sendRIP();
-		R4.sendRIP();
-		R1.sendRIP();
-		R2.sendRIP();
-		R3.sendRIP();
-		R4.sendRIP();
-		R1.sendRIP();
-		R2.sendRIP();
-		R3.sendRIP();
-		R4.sendRIP();
+		R1.sendRIP(200);
+		R2.sendRIP(200); //Using multiple of these to delay the startSending and allowing the table to upd
+		R3.sendRIP(200);
+		R4.sendRIP(200);
+
 		host4.StartSending(1,1,2,50,0); //CTRL+F to finde the node :)
 
 		// Start the simulation engine and of we go!

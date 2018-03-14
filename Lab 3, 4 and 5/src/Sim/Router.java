@@ -39,8 +39,13 @@ public class Router extends SimEnt {
         ((Link) link).setConnector(this);
     }
 
-    public void sendRIP() {
-        send(this, new RIP(0, node_table, this._RID), 0);
+    // Take a int as time as a parameter to stop sending the RIP packages.
+    // This should add the events send RIP packages until the time reaches the argument
+    public void sendRIP(int maxTime) {
+
+        for (int i = 0; i < maxTime; i+= 25){
+            send(this, new RIP(0, node_table, this._RID), i);
+        }
     }
 
     // This method searches for an entry in the routing table that matches
@@ -96,6 +101,7 @@ public class Router extends SimEnt {
 
         // If we get a RIP package
         if (event instanceof RIP) {
+
             if (((RIP) event).origin == this._RID && ((RIP) event).jumps == 0) {
                 // Send a new RIP package to every router (check for link)
                 System.out.println("\n\nSending RIP package from router " + this._RID + "!\n\n");
@@ -227,6 +233,10 @@ public class Router extends SimEnt {
                 }
                 // Do nothing to drop package...
             }
+
+            // Debugging -> prints the time
+            //System.out.println(SimEngine.getTime());
+
         }
 /*
 		// Not fully implemented...
