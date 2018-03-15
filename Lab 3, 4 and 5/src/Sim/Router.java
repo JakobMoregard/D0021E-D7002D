@@ -24,8 +24,8 @@ public class Router extends SimEnt {
         this._RID = RID;
 
         // Node table
-        //node_table = new RouteTableEntry[node_interfaces];
-        node_table = new RouteTableEntry[10];
+        node_table = new RouteTableEntry[node_interfaces*4];
+        //node_table = new RouteTableEntry[10];
         this.node_interfaces = node_table.length;
         bindings = new HashMap<NetworkAddr, NetworkAddr>();
     }
