@@ -60,16 +60,33 @@ public class Router extends SimEnt {
         SimEnt routerInterface = null;
         for (int i = 0; i < node_interfaces; i++)
             if (node_table[i] != null) {
-                try {
-                    if (((Node) node_table[i].device()).getAddr().networkId() == networkAddress) {
+            	SimEnt dev = node_table[i].device();
+            	
+            	if (dev instanceof Node) {
+            		Node node = (Node)dev;
+            		
+            		if (node.getAddr().networkId() == networkAddress) {
                         routerInterface = node_table[i].link();
                         return routerInterface;
                     }
-                } catch (Exception e) {
-                    System.out.println("Not node");
-                }
+            	} else if (dev instanceof Router) {
+            		Router router = (Router)dev;
+            		
+            		if (router._RID == networkAddress) {
+            			routerInterface = node_table[i].link();
+            			return routerInterface;
+            		}
+            	}
             }
-        return routerInterface;
+        
+        // for debugging purposes
+        if (routerInterface == null) {
+        	System.out.println(networkAddress);
+        	printRouting(node_table);
+        	throw new NullPointerException();
+        }
+        
+        return null;
     }
 
     /// Returns a node id that's not currently being used
