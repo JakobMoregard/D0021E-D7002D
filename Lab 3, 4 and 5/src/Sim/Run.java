@@ -39,10 +39,10 @@ public class Run {
 		// the host connected to the other
 		// side of the link is also provided
 		// Note. A switch is created in same way using the Switch class
-		Router R1 = new Router(1,5);
-		Router R2 = new Router(2,5);
-		Router R3 = new Router(3,5);
-		Router R4 = new Router(4,5);
+		Router R1 = new Router(1,10);
+		Router R2 = new Router(2,10);
+		Router R3 = new Router(3,10);
+		Router R4 = new Router(4,10);
 
 		R1.connectInterfaceToNode(0, link1, host1);
 		R2.connectInterfaceToNode(0, link2, host2);
