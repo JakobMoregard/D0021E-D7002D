@@ -24,4 +24,8 @@ public class NetworkAddr {
 	{
 		return _nodeId;
 	}
+	
+	public String toString() {
+		return networkId() + "." + nodeId();
+	}
 }
