@@ -1,5 +1,7 @@
 package Sim;
 
+import java.util.HashMap;
+
 // This class implements a simple router
 
 
@@ -10,6 +12,7 @@ public class Router extends SimEnt {
 
     // Rename of the tables to seperate the nodes and the routers
     private RouteTableEntry[] node_table;
+    private HashMap<NetworkAddr, NetworkAddr> bindings;
     private int node_interfaces;
     private int _now = 0;
     private int _RID;
@@ -24,6 +27,7 @@ public class Router extends SimEnt {
         //node_table = new RouteTableEntry[node_interfaces];
         node_table = new RouteTableEntry[10];
         this.node_interfaces = node_table.length;
+        bindings = new HashMap<NetworkAddr, NetworkAddr>();
     }
 
     // This method connects links to the router and also informs the
@@ -68,6 +72,49 @@ public class Router extends SimEnt {
         return routerInterface;
     }
 
+    /// Returns a node id that's not currently being used
+    private int newNodeId() {
+    	int nid = 0;
+    	
+    	while (true) {
+    		boolean taken = false;
+    		for (RouteTableEntry entry: node_table) {
+    			if (entry == null) {
+    				continue;
+    			}
+    			
+    			SimEnt dev = entry.device();
+    			
+    			if (dev instanceof Node) {
+    				Node node = (Node)dev;
+    				
+    				if (node._id.nodeId() == nid) {
+    					taken = true;
+    					break; // try another id
+    				}
+    			}
+    		}
+    		
+    		if (!taken) {
+    			return nid;
+    		}
+    	}
+    }
+    
+    /// Returns the next free slot in the routing table 
+    private int nextFreeSlot() {
+    	int i = 0;
+    	for (RouteTableEntry entry: node_table) {
+    		if (entry == null) {
+    			return i;
+    		}
+    		
+    		i++;
+    	}
+		
+		return -1;
+	}
+        
     public RouteTableEntry[] getNode_table() {
         return node_table;
     }
@@ -76,7 +123,7 @@ public class Router extends SimEnt {
         System.out.println("\nNode table for R" + _RID);
         for (int i = 0; i < node_table.length; i++) {
             try {
-                // System.out.println("Entry " + i + ": " + node_table[i] + " : " + node_table[i].interfacenr());
+                // System.out.println("Entry " + i + ": " + node_table[i] + " : " + node_table[i]. ());
                 System.out.println("Entry " + i + ": Node: " +
                         ((Node) node_table[i].device())._id.networkId() + "." + ((Node) node_table[i].device())._id.nodeId());
             } catch (Exception e) {
@@ -93,10 +140,54 @@ public class Router extends SimEnt {
     // When messages are received at the router this method is called
     public void recv(SimEnt source, Event event) {
         if (event instanceof Message) {
-            System.out.println("Router " + _RID + " handles packet with seq: " + ((Message) event).seq() + " from node: " + ((Message) event).source().networkId() + "." + ((Message) event).source().nodeId());
-            SimEnt sendNext = getInterface(((Message) event).destination().networkId());
-            System.out.println("Router sends to node: " + ((Message) event).destination().networkId() + "." + ((Message) event).destination().nodeId());
+        	Message m = (Message)event;
+        	NetworkAddr msource = m.source();
+        	NetworkAddr mdestination = m.destination();
+        	NetworkAddr care_of_addr = bindings.get(mdestination);
+        	
+        	if (care_of_addr != null) {
+        		// tunnel message to the care-of address
+        		System.out.println("Tunneling message from " + mdestination.toString() + " to " + care_of_addr.toString());
+        		mdestination = care_of_addr;
+        		m.setDestination(care_of_addr);
+        	}
+        	
+            System.out.println("Router " + _RID + " handles packet with seq: " + m.seq() + " from node: " + msource);
+            SimEnt sendNext = getInterface(mdestination.networkId());
+            System.out.println("Router sends to node: " + mdestination.toString());
             send(sendNext, event, _now);
+        }
+
+        // Registration request by a mobile node
+        if (event instanceof RegistrationRequest) {
+        	RegistrationRequest request = (RegistrationRequest)event;
+        	
+        	Node mn = (Node)source;
+        	Router fa = (Router)this;
+        		
+        	// Network id
+        	// XXX is this correct?
+        	int nid = fa._RID;
+        		
+        	// Start of the registration request
+        	NetworkAddr old_address = mn.getAddr();
+        	System.out.println(mn.toString() + " is migrating to network " + nid);
+        		
+        	// update IP address
+    		mn._id = new NetworkAddr(nid, newNodeId());
+    		System.out.println(mn.toString() + " migrated from " + old_address.toString());
+    			
+    		// Update the node's link
+    		Link l = new Link(1);
+    		mn.setPeer(l);
+        		
+    		// Add the mobile node to the routing table of the foreign agent
+    		int free_spot = nextFreeSlot();
+    		fa.connectInterfaceToNode(free_spot, l, mn);
+    			
+    		// Create a binding in the home agent routing table
+    		Router ha = request.homeAgent();
+    		ha.bindings.put(old_address, mn.getAddr());
         }
 
         // If we get a RIP package
