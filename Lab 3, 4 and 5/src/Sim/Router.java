@@ -36,7 +36,7 @@ public class Router extends SimEnt {
     public void connectInterfaceToNode(int interfaceNumber, SimEnt link, SimEnt node) {
         System.out.println("Connect Node!");
         if (interfaceNumber < node_interfaces) {
-            node_table[interfaceNumber] = new RouteTableEntry(link, node);
+            node_table[interfaceNumber] = new RouteTableEntry(link, node, 0, false);
         } else
             System.out.println("Trying to connect to port not in router");
 
@@ -47,8 +47,14 @@ public class Router extends SimEnt {
     // This should add the events send RIP packages until the time reaches the argument
     public void sendRIP(int maxTime) {
 
-        for (int i = 0; i < maxTime; i+= 25){
-            send(this, new RIP(0, node_table, this._RID), i);
+        // prepare checks for invalid routingpaths
+        for (int checkInvalidationRIP = 0; checkInvalidationRIP < maxTime ; checkInvalidationRIP += 60){
+            send(this, new InvalidFlushRIP(), checkInvalidationRIP);
+        }
+
+        // prepare for RIP broadcasts
+        for (int sendRIP = 0; sendRIP < maxTime; sendRIP += 25){
+            send(this, new RIP(0, node_table, this._RID), sendRIP);
         }
     }
 
@@ -208,6 +214,13 @@ public class Router extends SimEnt {
     		// Create a binding in the home agent routing table
     		Router ha = request.homeAgent();
     		ha.bindings.put(old_address, mn.getAddr());
+        }
+
+        // This will be used to purge the routing table
+        if (event instanceof InvalidFlushRIP){
+            System.out.println("CHECK FOR INVALID ROUTES!");
+
+
         }
 
         // If we get a RIP package

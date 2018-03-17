@@ -5,9 +5,15 @@ package Sim;
 // connected to the other side of the link
 
 public class RouteTableEntry extends TableEntry{
-	RouteTableEntry(SimEnt link, SimEnt device)
+
+    protected double time;
+    protected boolean poison;
+
+	RouteTableEntry(SimEnt link, SimEnt device, double time, boolean poison)
 	{
 		super(link, device);
+		this.time = time;
+	    this.poison = poison;
 	}
 
 	public SimEnt link()
