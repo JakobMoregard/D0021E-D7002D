@@ -216,17 +216,34 @@ public class Router extends SimEnt {
     		ha.bindings.put(old_address, mn.getAddr());
         }
 
-        // This will be used to purge the routing table
+        // This will be used to purge the routing table (Makes shure RFC is fulfilled)
         if (event instanceof InvalidFlushRIP){
             System.out.println("CHECK FOR INVALID ROUTES!");
+            for (int i = 0; i < node_table.length; i++){
+                if (node_table[i] == null){
+                    continue;
+                } else if (node_table[i].device() instanceof Router){
 
+                    // Start the timer...
+                    node_table[i].time += 60;
 
+                    // If there has been more time than 180 sec, mark the route poison (should not be used by the router, RFC)
+                    if (node_table[i].time <= 180){
+                        node_table[i].poison = true;
+
+                    // If there has been more time than 240 sec, drop the route (RFC)
+                    } else if (node_table[i].time <= 240){
+                        node_table[i] = null;
+                    }
+                }
+            }
         }
 
         // If we get a RIP package
         if (event instanceof RIP) {
 
             if (((RIP) event).origin == this._RID && ((RIP) event).jumps == 0) {
+                
                 // Send a new RIP package to every router (check for link)
                 System.out.println("\n\nSending RIP package from router " + this._RID + "!\n\n");
                 for (int i = 0; i < node_interfaces; i++) {
@@ -244,7 +261,9 @@ public class Router extends SimEnt {
 
                     }
                 }
+                
             } else if (((RIP) event).origin == this._RID && ((RIP) event).jumps > 0) {
+                
                 // The broadcast has somehow returned, do nothing to drop the package...
                 System.out.println("\nWARNING: Got a RIP package created from this host! Dropping the package to prevent loops! \nAmount of jumps: " + ((RIP) event).jumps + ".\nLast Link cost: " + ((RIP) event).connection_cost + ".\nSent from router: " + ((RIP) event).last_router_id + ".");
 
@@ -264,15 +283,21 @@ public class Router extends SimEnt {
                     printRouting(ripRout);
                     boolean set = false;
                     for (int i = 0; i < ripRout.length; i++) {
+                        
                         //Dont wanna add null, saves some time
                         if (ripRout[i] == null) {
                             continue;
                         }
+                        
                         //Prevent adding itself to routing table
                         else if (ripRout[i].device() instanceof Router) {
+
+
+
+
                             if (((Router) ripRout[i].device())._RID == this._RID) {
                                 System.out.println("Same Router");
-                                continue;
+                                continue;                           
                             } else {
                                 for (int l = 0; l < node_table.length; l++) {
                                     try {
@@ -298,6 +323,15 @@ public class Router extends SimEnt {
                                     }
                                 }
                             }
+                            
+                            // Check if a router is poisoned, do not reset the timer if that is
+                            if (node_table[i].poison == true)
+                            {
+                                continue;
+                            } else {
+                                node_table[i].time = 0;
+                            }
+
                         } else if (ripRout[i].device() instanceof Node) {
                             //If the node in rip table is a node or not the same router
                             //Replace if cost is less, if it dosnt exist add it to first free entry
@@ -328,6 +362,16 @@ public class Router extends SimEnt {
                         }else{
                             System.out.println("What node is this? " + ripRout[i].device());
                         }
+
+
+
+
+
+
+
+
+
+
                     }
                     System.out.println("Table after");
                     printRouting(node_table);
