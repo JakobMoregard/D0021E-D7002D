@@ -292,15 +292,21 @@ public class Router extends SimEnt {
                         //Prevent adding itself to routing table
                         else if (ripRout[i].device() instanceof Router) {
 
-
-
-
                             if (((Router) ripRout[i].device())._RID == this._RID) {
                                 System.out.println("Same Router");
                                 continue;                           
                             } else {
                                 for (int l = 0; l < node_table.length; l++) {
                                     try {
+
+                                        // Check if a router is poisoned, do not reset the timer if that is
+                                        if (node_table[l].poison == true)
+                                        {
+                                            continue;
+                                        } else {
+                                            node_table[l].time = 0;
+                                        }
+
                                         if (((Router) node_table[l].device())._RID == ((Router) ripRout[i].device())._RID) {
                                             System.out.println("Router exists in table " + l +"," + i + " replacing");
                                             //Should have a check to see if cost is less ?
@@ -322,14 +328,6 @@ public class Router extends SimEnt {
                                         }
                                     }
                                 }
-                            }
-                            
-                            // Check if a router is poisoned, do not reset the timer if that is
-                            if (node_table[i].poison == true)
-                            {
-                                continue;
-                            } else {
-                                node_table[i].time = 0;
                             }
 
                         } else if (ripRout[i].device() instanceof Node) {
@@ -359,23 +357,12 @@ public class Router extends SimEnt {
                                     }
                                 }
                             }
-                        }else{
+                        } else {
                             System.out.println("What node is this? " + ripRout[i].device());
                         }
-
-
-
-
-
-
-
-
-
-
                     }
                     System.out.println("Table after");
                     printRouting(node_table);
-                    // Timeout check for router_table (RFC) and mark poison on any route not responding
 
                     // forward to all routers (check for link)
                     System.out.println("\nSending RIP package!\n");
