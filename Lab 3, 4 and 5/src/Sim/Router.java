@@ -16,6 +16,7 @@ public class Router extends SimEnt {
     private int node_interfaces;
     private int _now = 0;
     private int _RID;
+    private final boolean printTables = true;
 
     // When created, number of interfaces are defined
 
@@ -25,7 +26,6 @@ public class Router extends SimEnt {
 
         // Node table
         node_table = new RouteTableEntry[node_interfaces*4];
-        //node_table = new RouteTableEntry[10];
         this.node_interfaces = node_table.length;
         bindings = new HashMap<NetworkAddr, NetworkAddr>();
     }
@@ -36,7 +36,7 @@ public class Router extends SimEnt {
     public void connectInterfaceToNode(int interfaceNumber, SimEnt link, SimEnt node) {
         System.out.println("Connect Node!");
         if (interfaceNumber < node_interfaces) {
-            node_table[interfaceNumber] = new RouteTableEntry(link, node, interfaceNumber);
+            node_table[interfaceNumber] = new RouteTableEntry(link, node);
         } else
             System.out.println("Trying to connect to port not in router");
 
@@ -137,6 +137,9 @@ public class Router extends SimEnt {
     }
 
     public void printRouting(RouteTableEntry[] node_table) {
+        if(!printTables){
+            return;
+        }
         System.out.println("\nNode table for R" + _RID);
         for (int i = 0; i < node_table.length; i++) {
             try {
@@ -145,7 +148,7 @@ public class Router extends SimEnt {
                         ((Node) node_table[i].device())._id.networkId() + "." + ((Node) node_table[i].device())._id.nodeId());
             } catch (Exception e) {
                 if (node_table[i] == null) {
-                    System.out.println("Entry " + i + ":-");
+                    System.out.println("Entry " + i + ": -");
                 } else {
                     System.out.println("Entry " + i + ": RID: " + ((Router) node_table[i].device())._RID);
                 }
@@ -238,7 +241,6 @@ public class Router extends SimEnt {
                 if (((RIP) event).jumps < 15) {
                     System.out.println("\nReceiving and forwarding RIP package from router " + ((RIP) event).origin + "!\n");
 
-
                     // Compare and update the table (router/nodes)
                     // for each, check if in table and if the cost is less than the table, update
                     // if not in table, add the route and cost etc...
@@ -262,17 +264,15 @@ public class Router extends SimEnt {
                                 for (int l = 0; l < node_table.length; l++) {
                                     try {
                                         if (((Router) node_table[l].device())._RID == ((Router) ripRout[i].device())._RID) {
-                                            System.out.println("Router exists in table " + l + i + " replacing");
-                                            //Kolla så cost är mindre
+                                            System.out.println("Router exists in table " + l +"," + i + " replacing");
+                                            //Should have a check to see if cost is less ?
                                             node_table[l] = ripRout[i];
                                             set = true;
                                             break;
                                         }else {
                                             set = false;
                                         }
-                                    } catch (ClassCastException e) {
-                                        continue;
-                                    } catch (NullPointerException n) {
+                                    } catch (ClassCastException|NullPointerException e) {
                                         continue;
                                     }
                                 }
@@ -291,8 +291,8 @@ public class Router extends SimEnt {
                             for (int j = 0; j < node_table.length; j++) {
                                 try {
                                     if (((Node) node_table[j].device())._id == ((Node) ripRout[i].device())._id) {
-                                        System.out.println("Node Exists in table " + j + i);
-                                        //BÖR KOLLA SÅ Cost är mindre
+                                        System.out.println("Node Exists in table " + j +","+ i);
+                                        //Should have a check to see if cost is less ?
                                         node_table[j] = ripRout[i];
                                         set = true;
                                         break;
@@ -313,7 +313,7 @@ public class Router extends SimEnt {
                                 }
                             }
                         }else{
-                            System.out.println("\n\n\n\n\n\n\n\n\n\n wtf \n\n\n\n\n\n\n\n");
+                            System.out.println("What node is this? " + ripRout[i].device());
                         }
                     }
                     System.out.println("Table after");
@@ -327,7 +327,7 @@ public class Router extends SimEnt {
                             // Check if a connection (network) is connected, otherwise it will get a null pointer exception...
                             SimEnt link = node_table[i].link();
                             int id = ((Router) node_table[i].device())._RID;
-                            System.out.println(id);
+                            //System.out.println(id);
                             ((RIP) event).jumps += 1;
                             ((RIP) event).connection_cost = ((Link) node_table[i].link()).link_cost;
                             ((RIP) event).last_router_id = this._RID;
@@ -341,56 +341,6 @@ public class Router extends SimEnt {
                 }
                 // Do nothing to drop package...
             }
-
-            // Debugging -> prints the time
-            //System.out.println(SimEngine.getTime());
-
         }
-/*
-		// Not fully implemented...
-		if (event instanceof UpdateNodeIP)
-		{
-			// The router has been notified to update the router table
-
-            System.out.println("\n\nThe Router received a UpdateNodeIp package!\n\n");
-
-			if (Arrays.asList(node_table).contains(((UpdateNodeIP) event)._oldAddress))
-			{
-			    // If the old address is found, remove it and add the new network address
-				for (RouteTableEntry en : node_table)
-                {
-                    NetworkAddr oldAddr = ((UpdateNodeIP) event).getOld();
-                    NetworkAddr newAddr = ((UpdateNodeIP) event).source();
-                    if (((Node)en.device())._id.equals(oldAddr))
-                    {
-                    	// Found an old address in the routing table, remove and replace with new address
-                        en = new RouteTableEntry(en.link(), new Node(newAddr.networkId(), newAddr.nodeId()));
-                        Arrays.asList(node_table).remove(((UpdateNodeIP) event)._oldAddress);
-                        Arrays.asList(node_table).add(en);
-
-                    }
-                }
-
-				//Now generate a new UpdateNodeIPNode to update all the other nodes in the network.
-                for (RouteTableEntry au : node_table)
-                {
-
-                    // Check that the address is NOT the source to prevent loops
-                    // After the check, notify all nodes of th new address
-                    if (!au.device().equals(((UpdateNodeIP) event)._source.nodeId()))
-                    {
-                        System.out.println("\n\nROUTER UPDATED TABLE!!\n\n");
-
-                        // This will send a package to the router
-                        System.out.println("\n\nRouter recieved UpdateIP message!\n\n");
-
-                        // New package to all nodes EXCEPT the node who triggered the update
-                        SimEnt sendNext = getInterface(((Node)au.link())._toNetwork);
-                        send (sendNext, event, _now);
-                    }
-                }
-			}
-		}
-		*/
     }
 }

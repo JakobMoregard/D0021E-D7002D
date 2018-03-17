@@ -11,18 +11,15 @@ public class Node extends SimEnt {
 	protected int _seq = 0;
 	protected int _network;
 
-	
 	public Node (int network, int node)
 	{
 		super();
 		_id = new NetworkAddr(network, node);
 		oldAddr = _id;
 		_network = network;
-	}	
-	
+	}
 	
 	// Sets the peer to communicate with. This node is single homed
-	
 	public void setPeer (SimEnt peer)
 	{
 		_peer = peer;
@@ -32,23 +29,6 @@ public class Node extends SimEnt {
 			 ((Link) _peer).setConnector(this);
 		}
 	}
-
-	public void updateIP(int network, int node)
-	{
-	    // Handle node disconnect in ROUTER
-
-	    oldAddr = _id;
-		_id = new NetworkAddr(network, node);
-
-		Link newLink = new Link(1);
-		newLink.setConnector(newLink);
-
-		// 1. Update the routers table.
-		send(this, new UpdateNodeIP(_id, oldAddr, _id, _seq++), 0);
-
-
-	}
-	
 	
 	public NetworkAddr getAddr()
 	{
@@ -99,36 +79,6 @@ public class Node extends SimEnt {
 		{
 			System.out.println("Node "+_id.networkId()+ "." + _id.nodeId() +" receives message with seq: "+((Message) ev).seq() + " at time "+SimEngine.getTime());
 			
-		}
-
-		// Not fully implemented
-		if (ev instanceof UpdateNodeIP)
-		{
-		    // Check the sender
-		    if (((UpdateNodeIP) ev)._source == _id)
-		    {
-		        // This will send a package to the router
-                System.out.println("\n\n\nThe node is about to send a UpdateNodeIp package!");
-
-                // New package ....
-                System.out.println("Sending a UpdateNodeIp package!\n\n\n");
-                send(_peer, new UpdateNodeIP(_id, oldAddr, _id, _seq++), 0);
-
-
-            }else {
-				// We have received a package, update old Address
-				System.out.println("\n\n\nNode got UpdateNodeIp package!\n\n\n");
-				//this._id = (UpdateNodeIP)ev.
-				System.out.println("\n\n\nSending UpdateNodeIp package to router!\n\n\n");
-
-				int oldNodeID = ((UpdateNodeIP) ev)._oldAddress.nodeId();
-				int oldNetworkID = ((UpdateNodeIP) ev)._oldAddress.networkId();
-
-				if (oldNodeID == _toHost && oldNetworkID == _toNetwork) {
-					_toHost = ((UpdateNodeIP) ev)._newAddr.nodeId();
-					_toNetwork = ((UpdateNodeIP) ev)._newAddr.networkId();
-				}
-			}
 		}
 	}
 }

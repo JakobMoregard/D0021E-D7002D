@@ -11,7 +11,6 @@ public class RIP implements Event{
     // A string (name) of the original sender
     protected int origin;
     // The link used to transmit the package
-    private Link link;
 
     protected int last_router_id;
 
@@ -19,7 +18,6 @@ public class RIP implements Event{
         super();
         this.connection_cost = connection_cost;
         this.node_table = node_table;
-        this.link = link;
         this.origin = origin;
     }
 
