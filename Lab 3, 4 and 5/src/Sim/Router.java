@@ -53,7 +53,7 @@ public class Router extends SimEnt {
         }
 
         // prepare for RIP broadcasts
-        for (int sendRIP = 0; sendRIP < maxTime; sendRIP += 25){
+        for (int sendRIP = 0; sendRIP < maxTime; sendRIP += 30){
             send(this, new RIP(0, node_table, this._RID), sendRIP);
         }
     }
@@ -228,11 +228,13 @@ public class Router extends SimEnt {
                     node_table[i].time += 60;
 
                     // If there has been more time than 180 sec, mark the route poison (should not be used by the router, RFC)
-                    if (node_table[i].time <= 180){
+                    if (node_table[i].time >= 180){
                         node_table[i].poison = true;
 
                     // If there has been more time than 240 sec, drop the route (RFC)
-                    } else if (node_table[i].time <= 240){
+                    }
+
+                    if (node_table[i].time >= 240){
                         node_table[i] = null;
                     }
                 }
