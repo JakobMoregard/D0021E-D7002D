@@ -243,6 +243,16 @@ public class Router extends SimEnt {
 
         // If we get a RIP package
         if (event instanceof RIP) {
+            //Update time for routers
+            for(int w = 0; w < node_interfaces; w++){
+                try {
+                    if (((Router) node_table[w].device())._RID == ((RIP) event).last_router_id) {
+                        node_table[w].time = 0;
+                    }
+                }catch (Exception e){
+                    continue;
+                }
+            }
 
             if (((RIP) event).origin == this._RID && ((RIP) event).jumps == 0) {
                 
@@ -251,14 +261,16 @@ public class Router extends SimEnt {
                 for (int i = 0; i < node_interfaces; i++) {
                     // Check if a connection (network) is connected, otherwise it will get a null pointer exception...
                     try {
-                        SimEnt a = ((Router) node_table[i].device());
-                        SimEnt link = node_table[i].link();
-                        ((RIP) event).jumps += 1;
-                        ((RIP) event).connection_cost = ((Link) node_table[i].link()).link_cost;
-                        ((RIP) event).last_router_id = this._RID;
-                        send(link, event, 0);
+                        if(((RIP) event).last_router_id != ((Router)node_table[i].device())._RID) {
+                            SimEnt a = ((Router) node_table[i].device());
+                            SimEnt link = node_table[i].link();
+                            ((RIP) event).jumps += 1;
+                            ((RIP) event).connection_cost = ((Link) node_table[i].link()).link_cost;
+                            ((RIP) event).last_router_id = this._RID;
+                            send(link, event, 0);
+                        }
                     } catch (NullPointerException e) {
-                        System.out.println("Empty routing entry: " + i);
+                       // System.out.println("Empty routing entry: " + i);
                     } catch (ClassCastException c){
 
                     }
@@ -295,7 +307,7 @@ public class Router extends SimEnt {
                         else if (ripRout[i].device() instanceof Router) {
 
                             if (((Router) ripRout[i].device())._RID == this._RID) {
-                                System.out.println("Same Router");
+                                //System.out.println("Same Router");
                                 continue;                           
                             } else {
                                 for (int l = 0; l < node_table.length; l++) {
@@ -371,13 +383,15 @@ public class Router extends SimEnt {
                     for (int i = 0; i < node_interfaces; i++) {
                         try {
                             // Check if a connection (network) is connected, otherwise it will get a null pointer exception...
-                            SimEnt link = node_table[i].link();
-                            int id = ((Router) node_table[i].device())._RID;
-                            //System.out.println(id);
-                            ((RIP) event).jumps += 1;
-                            ((RIP) event).connection_cost = ((Link) node_table[i].link()).link_cost;
-                            ((RIP) event).last_router_id = this._RID;
-                            send(link, event, 0);
+                            if(((RIP) event).last_router_id != ((Router)node_table[i].device())._RID) {
+                                SimEnt link = node_table[i].link();
+                                int id = ((Router) node_table[i].device())._RID;
+                                //System.out.println(id);
+                                ((RIP) event).jumps += 1;
+                                ((RIP) event).connection_cost = ((Link) node_table[i].link()).link_cost;
+                                ((RIP) event).last_router_id = this._RID;
+                                send(link, event, 0);
+                            }
                         } catch (NullPointerException e) {
                             // System.out.println("Empty routing entry: " + i);
                         } catch (ClassCastException c) {
