@@ -106,14 +106,8 @@ public class Router extends SimEnt {
             		}
             	}
             }
-        
-        // for debugging purposes
-        if (routerInterface == null) {
-        	System.out.println(networkAddress);
-        	printRouting(node_table);
-        	throw new NullPointerException();
-        }
-        
+
+        // not found
         return null;
     }
 
@@ -205,8 +199,12 @@ public class Router extends SimEnt {
         	
             System.out.println("Router " + _RID + " handles packet with seq: " + m.seq() + " from node: " + msource);
             SimEnt sendNext = getInterface(mdestination.networkId());
-            System.out.println("Router sends to node: " + mdestination.toString());
-            send(sendNext, event, _now);
+            if (sendNext == null) {
+            	System.err.println("Router " + _RID + ": host " + mdestination + " is unreachable");
+            } else {
+            	System.out.println("Router sends to node: " + mdestination.toString());
+                send(sendNext, event, _now);
+            }
         }
 
         // Registration request by a mobile node
