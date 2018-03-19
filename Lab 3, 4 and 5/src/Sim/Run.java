@@ -57,7 +57,6 @@ public class Run {
 		R3.connectInterfaceToNode(6, R3TOR4, R4);
 		R4.connectInterfaceToNode(6, R3TOR4, R3);
 
-
 		System.out.println("Connected link with first router: " + R1TOR2._connectorA.toString() +
 				" and second router: " + R1TOR2._connectorB.toString());
 
@@ -65,8 +64,11 @@ public class Run {
 		R2.sendRIP(200); //Using multiple of these to delay the startSending and allowing the table to upd
 		R3.sendRIP(200);
 		R4.sendRIP(200);
-
-		host4.StartSending(1,1,2,50,0); //CTRL+F to finde the node :)
+		host1.changeInterface(7, 2);
+		//host1.send(R2, new RegistrationRequest(R1), 60);
+		host1.StartSending(2,1,10,1,0);
+		host3.StartSending(1,1,10,10,50);
+		//host4.StartSending(1,1,5,50,0); //CTRL+F to finde the node :)
 
 		// Start the simulation engine and of we go!
 		Thread t=new Thread(SimEngine.instance());

@@ -4,19 +4,15 @@ package Sim;
 // and it count messages send and received.
 
 public class Node extends SimEnt {
-	protected NetworkAddr oldAddr;
 	protected NetworkAddr _id;
 	protected SimEnt _peer;
 	protected int _sentmsg=0;
 	protected int _seq = 0;
-	protected int _network;
 
 	public Node (int network, int node)
 	{
 		super();
 		_id = new NetworkAddr(network, node);
-		oldAddr = _id;
-		_network = network;
 	}
 	
 	// Sets the peer to communicate with. This node is single homed
@@ -47,6 +43,9 @@ public class Node extends SimEnt {
 	protected int _timeBetweenSending = 10; //time between messages
 	protected int _toNetwork = 0;
 	protected int _toHost = 0;
+
+	private int _changeInterfaceAfter = -1;
+	private int _newInterfaceNumber = 0;
 	
 	public void StartSending(int network, int node, int number, int timeInterval, int startSeq)
 	{
@@ -57,7 +56,11 @@ public class Node extends SimEnt {
 		_seq = startSeq;
 		send(this, new TimerEvent(),0);	
 	}
-	
+	public void changeInterface(int interfaceNumber, int packetsSent)
+	{
+		_changeInterfaceAfter = packetsSent;
+		_newInterfaceNumber = interfaceNumber;
+	}
 //**********************************************************************************	
 	
 	// This method is called upon that an event destined for this node triggers.
@@ -73,6 +76,10 @@ public class Node extends SimEnt {
 				send(this, new TimerEvent(),_timeBetweenSending);
 				System.out.println("Node "+_id.networkId()+ "." + _id.nodeId() +" sent message with seq: "+_seq + " at time "+SimEngine.getTime());
 				_seq++;
+			}
+			if(_sentmsg == _changeInterfaceAfter){
+				System.out.println("INTERFACE CHANGE "+_id.networkId()+"."+_id.nodeId()+" changing to "+_newInterfaceNumber);
+				send(_peer, new ChangeInterface(_id, _newInterfaceNumber), 0);
 			}
 		}
 		if (ev instanceof Message)

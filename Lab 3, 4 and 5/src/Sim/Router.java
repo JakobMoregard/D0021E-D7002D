@@ -62,6 +62,28 @@ public class Router extends SimEnt {
     // the network number in the destination field of a messages. The link
     // represents that network number is returned
 
+    public void changeInterface(NetworkAddr oldInterface, int newInterfaceNumber){
+
+        if(node_table[newInterfaceNumber] != null){
+            System.out.println("!! Interface occupied!");
+            return;
+        }
+        for ( int i  = 0; i < node_interfaces; i++){
+            if(node_table[i] != null){
+                try {
+                    if (((Node) node_table[i].device()).getAddr() == oldInterface) {
+                        RouteTableEntry r = node_table[i];
+                        node_table[i] = null;
+                        node_table[newInterfaceNumber] = r;
+                        //_routingTable[newInterfaceNumber] = _routingTable[i];
+                    }
+                }catch(Exception e){
+                    continue;
+                }
+            }
+        }
+        return;
+    }
     private SimEnt getInterface(int networkAddress) {
         SimEnt routerInterface = null;
         for (int i = 0; i < node_interfaces; i++)
@@ -165,6 +187,9 @@ public class Router extends SimEnt {
 
     // When messages are received at the router this method is called
     public void recv(SimEnt source, Event event) {
+        if (event instanceof ChangeInterface){
+            changeInterface(((ChangeInterface) event).oldInterface(), ((ChangeInterface) event).newInterfaceNumber());
+        }
         if (event instanceof Message) {
         	Message m = (Message)event;
         	NetworkAddr msource = m.source();
