@@ -28,4 +28,15 @@ public class NetworkAddr {
 	public String toString() {
 		return networkId() + "." + nodeId();
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		NetworkAddr rhs = (NetworkAddr)o;
+		return (this._networkId == rhs._networkId) && (this._nodeId == rhs._nodeId);
+	}
+	
+	@Override
+	public int hashCode() {
+		return 37 * _networkId + _nodeId;
+	}
 }

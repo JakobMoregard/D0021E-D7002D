@@ -84,7 +84,7 @@ public class Router extends SimEnt {
         }
         return;
     }
-    private SimEnt getInterface(int networkAddress) {
+    private SimEnt getInterface(NetworkAddr addr) {
         SimEnt routerInterface = null;
         for (int i = 0; i < node_interfaces; i++)
             if (node_table[i] != null) {
@@ -93,14 +93,14 @@ public class Router extends SimEnt {
             	if (dev instanceof Node) {
             		Node node = (Node)dev;
             		
-            		if (node.getAddr().networkId() == networkAddress) {
+            		if (node.getAddr().equals(addr)) {
                         routerInterface = node_table[i].link();
                         return routerInterface;
                     }
             	} else if (dev instanceof Router) {
             		Router router = (Router)dev;
             		
-            		if (router._RID == networkAddress) {
+            		if (router._RID == addr.networkId()) {
             			routerInterface = node_table[i].link();
             			return routerInterface;
             		}
@@ -192,13 +192,13 @@ public class Router extends SimEnt {
         	
         	if (care_of_addr != null) {
         		// tunnel message to the care-of address
-        		System.out.println("Tunneling message from " + mdestination.toString() + " to " + care_of_addr.toString());
+        		System.out.println("HA: Tunneling message from " + mdestination.toString() + " to " + care_of_addr.toString());
         		mdestination = care_of_addr;
         		m.setDestination(care_of_addr);
         	}
         	
             System.out.println("Router " + _RID + " handles packet with seq: " + m.seq() + " from node: " + msource);
-            SimEnt sendNext = getInterface(mdestination.networkId());
+            SimEnt sendNext = getInterface(mdestination);
             if (sendNext == null) {
             	System.err.println("Router " + _RID + ": host " + mdestination + " is unreachable");
             } else {
@@ -219,12 +219,13 @@ public class Router extends SimEnt {
         	int nid = fa._RID;
         		
         	// Start of the registration request
-        	NetworkAddr old_address = mn.getAddr();
+        	NetworkAddr hoa = mn.getAddr();
         	System.out.println(mn.toString() + " is migrating to network " + nid);
         		
         	// update IP address
     		mn._id = new NetworkAddr(nid, newNodeId());
-    		System.out.println(mn.toString() + " migrated from " + old_address.toString());
+    		NetworkAddr coa = mn.getAddr();
+    		System.out.println("Node with home address " + hoa.toString() + " has been assigned the care-of address " + coa.toString());
     			
     		// Update the node's link
     		Link l = new Link(1);
@@ -236,7 +237,7 @@ public class Router extends SimEnt {
     			
     		// Create a binding in the home agent routing table
     		Router ha = request.homeAgent();
-    		ha.bindings.put(old_address, mn.getAddr());
+    		ha.bindings.put(hoa, coa);
         }
 
         // This will be used to purge the routing table (Makes shure RFC is fulfilled)

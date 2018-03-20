@@ -47,14 +47,14 @@ public class Node extends SimEnt {
 	private int _changeInterfaceAfter = -1;
 	private int _newInterfaceNumber = 0;
 	
-	public void StartSending(int network, int node, int number, int timeInterval, int startSeq)
+	public void StartSending(int network, int node, int number, int timeInterval, int startSeq, int delay)
 	{
 		_stopSendingAfter = number;
 		_timeBetweenSending = timeInterval;
 		_toNetwork = network;
 		_toHost = node;
 		_seq = startSeq;
-		send(this, new TimerEvent(),0);	
+		send(this, new TimerEvent(),delay);	
 	}
 	public void changeInterface(int interfaceNumber, int packetsSent)
 	{
