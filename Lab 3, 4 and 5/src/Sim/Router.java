@@ -84,7 +84,7 @@ public class Router extends SimEnt {
         }
         return;
     }
-    private SimEnt getInterface(int networkAddress) {
+    private SimEnt getInterface(NetworkAddr addr) {
         SimEnt routerInterface = null;
         for (int i = 0; i < node_interfaces; i++)
             if (node_table[i] != null) {
@@ -93,14 +93,14 @@ public class Router extends SimEnt {
             	if (dev instanceof Node) {
             		Node node = (Node)dev;
             		
-            		if (node.getAddr().networkId() == networkAddress) {
+            		if (node.getAddr().equals(addr)) {
                         routerInterface = node_table[i].link();
                         return routerInterface;
                     }
             	} else if (dev instanceof Router) {
             		Router router = (Router)dev;
             		
-            		if (router._RID == networkAddress) {
+            		if (router._RID == addr.networkId()) {
             			routerInterface = node_table[i].link();
             			return routerInterface;
             		}
@@ -198,7 +198,7 @@ public class Router extends SimEnt {
         	}
         	
             System.out.println("Router " + _RID + " handles packet with seq: " + m.seq() + " from node: " + msource);
-            SimEnt sendNext = getInterface(mdestination.networkId());
+            SimEnt sendNext = getInterface(mdestination);
             if (sendNext == null) {
             	System.err.println("Router " + _RID + ": host " + mdestination + " is unreachable");
             } else {
