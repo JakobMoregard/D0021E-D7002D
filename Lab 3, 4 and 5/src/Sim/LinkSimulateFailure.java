@@ -31,7 +31,7 @@ public class LinkSimulateFailure extends Link{
     {
 
         if (SimEngine.getTime() > failure){
-            System.out.println("Link simulates failure...");
+            System.out.println("Link simulates failure at time: " + SimEngine.getTime()+ "...");
 
         } else {
 

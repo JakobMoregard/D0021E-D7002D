@@ -165,6 +165,7 @@ public class Router extends SimEnt {
         System.out.println("\nNode table for R" + _RID);
         for (int i = 0; i < node_table.length; i++) {
             try {
+
                 // System.out.println("Entry " + i + ": " + node_table[i] + " : " + node_table[i]. ());
                 System.out.println("Entry " + i + ": Node: " +
                         ((Node) node_table[i].device())._id.networkId() + "." + ((Node) node_table[i].device())._id.nodeId());
@@ -172,7 +173,7 @@ public class Router extends SimEnt {
                 if (node_table[i] == null) {
                     System.out.println("Entry " + i + ": -");
                 } else {
-                    System.out.println("Entry " + i + ": RID: " + ((Router) node_table[i].device())._RID);
+                    System.out.println("Entry " + i + ": RID: " + ((Router) node_table[i].device())._RID + " is poison: " + node_table[i].poison);
                 }
             }
         }
@@ -254,13 +255,32 @@ public class Router extends SimEnt {
                     // If there has been more time than 180 sec, mark the route poison (should not be used by the router, RFC)
                     if (node_table[i].time >= 180){
                         node_table[i].poison = true;
+                        System.out.println("Router " + _RID + " is poison!");
+
+                    }
 
                     // If there has been more time than 240 sec, drop the route (RFC)
+                    if (node_table[i].time >= 240){
+                        int id = ((Router) node_table[i].device())._RID;
+                        node_table[i] = null;
+
+                        // Removes any node associated with the network.
+                        for (int k = 0; k < node_table.length; k++){
+                            if (node_table[k] == null){
+                                continue;
+                            } else if (node_table[k].device() instanceof Node){
+                                if (((Node) node_table[k].device())._id.networkId() == id){
+                                    node_table[k] = null;
+                                }
+
+                            }
+                        }
+
+
+                        System.out.println("Router " + _RID + " dropped because of timeout!");
                     }
 
-                    if (node_table[i].time >= 240){
-                        node_table[i] = null;
-                    }
+                    System.out.println("Checking poison for router " + this._RID + " is poison: " + node_table[i].poison);
                 }
             }
         }
@@ -343,17 +363,18 @@ public class Router extends SimEnt {
                                             continue;
                                         } else {
                                             node_table[l].time = 0;
+                                            node_table[l].poison = false;
+                                            if (((Router) node_table[l].device())._RID == ((Router) ripRout[i].device())._RID) {
+                                                System.out.println("Router exists in table " + l + "," + i + " replacing");
+                                                //Should have a check to see if cost is less ?
+                                                node_table[l] = ripRout[i];
+                                                set = true;
+                                                break;
+                                            } else {
+                                                set = false;
+                                            }
                                         }
 
-                                        if (((Router) node_table[l].device())._RID == ((Router) ripRout[i].device())._RID) {
-                                            System.out.println("Router exists in table " + l +"," + i + " replacing");
-                                            //Should have a check to see if cost is less ?
-                                            node_table[l] = ripRout[i];
-                                            set = true;
-                                            break;
-                                        }else {
-                                            set = false;
-                                        }
                                     } catch (ClassCastException|NullPointerException e) {
                                         continue;
                                     }

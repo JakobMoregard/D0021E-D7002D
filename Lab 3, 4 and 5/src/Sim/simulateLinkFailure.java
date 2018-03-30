@@ -13,7 +13,7 @@ public class simulateLinkFailure {
 		Link link2 = new Link(1);
 		Link link3 = new Link(1);
 		Link R1TOR2 = new Link(1);
-        LinkSimulateFailure R2TOR3 = new LinkSimulateFailure(1,70);
+        LinkSimulateFailure R2TOR3 = new LinkSimulateFailure(1,40);
 
 		Node host1 = new Node(1,1);
         Node host2 = new Node(2,1);
@@ -46,9 +46,9 @@ public class simulateLinkFailure {
 		R3.connectInterfaceToNode(2, R2TOR3, R2);
 
 
-		R1.sendRIP(400);
-		R2.sendRIP(400);
-		R3.sendRIP(400);
+		R1.sendRIP(570);
+		R2.sendRIP(570);
+		R3.sendRIP(570);
 
 		host1.changeInterface(7, 2);
 		//host1.send(R2, new RegistrationRequest(R1), 60);
