@@ -1,6 +1,6 @@
 package Sim;
 
-public class LinkSimulateFailure extends SimEnt{
+public class LinkSimulateFailure extends Link{
     protected SimEnt _connectorA=null;
     protected SimEnt _connectorB=null;
     protected int _now=0;
@@ -9,7 +9,7 @@ public class LinkSimulateFailure extends SimEnt{
 
     public LinkSimulateFailure(int link_cost, int linkFailure)
     {
-        super();
+        super(link_cost);
         this.link_cost = link_cost;
         failure = linkFailure;
     }
@@ -31,6 +31,7 @@ public class LinkSimulateFailure extends SimEnt{
     {
 
         if (SimEngine.getTime() > failure){
+            System.out.println("Link simulates failure...");
 
         } else {
 
