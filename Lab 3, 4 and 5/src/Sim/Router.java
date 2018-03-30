@@ -173,7 +173,7 @@ public class Router extends SimEnt {
                 if (node_table[i] == null) {
                     System.out.println("Entry " + i + ": -");
                 } else {
-                    System.out.println("Entry " + i + ": RID: " + ((Router) node_table[i].device())._RID + " is poison: " + node_table[i].poison);
+                    System.out.println("Entry " + i + ": RID: " + ((Router) node_table[i].device())._RID + " is poison: " + node_table[i].poison + " time: " + node_table[i].time);
                 }
             }
         }
@@ -280,7 +280,7 @@ public class Router extends SimEnt {
                         System.out.println("Router " + _RID + " dropped because of timeout!");
                     }
 
-                    System.out.println("Checking poison for router " + this._RID + " is poison: " + node_table[i].poison);
+                    System.out.println("Checking poison for router " + this._RID + " is poison: " + node_table[i].poison + " time: " + node_table[i].time);
                 }
             }
         }
@@ -299,7 +299,7 @@ public class Router extends SimEnt {
             }
 
             if (((RIP) event).origin == this._RID && ((RIP) event).jumps == 0) {
-                
+
                 // Send a new RIP package to every router (check for link)
                 System.out.println("\n\nSending RIP package from router " + this._RID + "!\n\n");
                 for (int i = 0; i < node_interfaces; i++) {
@@ -319,9 +319,9 @@ public class Router extends SimEnt {
 
                     }
                 }
-                
+
             } else if (((RIP) event).origin == this._RID && ((RIP) event).jumps > 0) {
-                
+
                 // The broadcast has somehow returned, do nothing to drop the package...
                 System.out.println("\nWARNING: Got a RIP package created from this host! Dropping the package to prevent loops! \nAmount of jumps: " + ((RIP) event).jumps + ".\nLast Link cost: " + ((RIP) event).connection_cost + ".\nSent from router: " + ((RIP) event).last_router_id + ".");
 
@@ -341,39 +341,36 @@ public class Router extends SimEnt {
                     printRouting(ripRout);
                     boolean set = false;
                     for (int i = 0; i < ripRout.length; i++) {
-                        
+
                         //Dont wanna add null, saves some time
                         if (ripRout[i] == null) {
                             continue;
                         }
-                        
+
                         //Prevent adding itself to routing table
                         else if (ripRout[i].device() instanceof Router) {
 
                             if (((Router) ripRout[i].device())._RID == this._RID) {
                                 //System.out.println("Same Router");
-                                continue;                           
+                                continue;
                             } else {
                                 for (int l = 0; l < node_table.length; l++) {
                                     try {
 
-                                        // Check if a router is poisoned, do not reset the timer if that is
-                                        if (node_table[l].poison == true)
-                                        {
-                                            continue;
+                                        node_table[l].time = 0;
+                                        node_table[l].poison = false;
+
+
+                                        if (((Router) node_table[l].device())._RID == ((Router) ripRout[i].device())._RID) {
+                                            System.out.println("Router exists in table " + l + "," + i + " replacing");
+                                            //Should have a check to see if cost is less ?
+                                            node_table[l] = ripRout[i];
+                                            set = true;
+                                            break;
                                         } else {
-                                            node_table[l].time = 0;
-                                            node_table[l].poison = false;
-                                            if (((Router) node_table[l].device())._RID == ((Router) ripRout[i].device())._RID) {
-                                                System.out.println("Router exists in table " + l + "," + i + " replacing");
-                                                //Should have a check to see if cost is less ?
-                                                node_table[l] = ripRout[i];
-                                                set = true;
-                                                break;
-                                            } else {
-                                                set = false;
-                                            }
+                                            set = false;
                                         }
+
 
                                     } catch (ClassCastException|NullPointerException e) {
                                         continue;

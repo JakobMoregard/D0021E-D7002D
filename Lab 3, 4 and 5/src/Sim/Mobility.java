@@ -53,5 +53,7 @@ public class Mobility {
 		{
 			System.out.println("The motor seems to have a problem, time for service?" +  e.toString());
 		}
+		R1.printRouting(R1.getNode_table());
+		R2.printRouting(R2.getNode_table());
 	}
 }
